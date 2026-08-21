@@ -101,11 +101,11 @@ class Utilities:
             return
             
         log_text = (
-            "<blockquote><b>🎵 ɴᴇᴡ ᴍᴇᴅɪᴀ ᴘʟᴀʏᴇᴅ</b>\n\n"
-            f"<b>🥀 ᴄʜᴀᴛ :</b> {m.chat.title} [<code>{m.chat.id}</code>]\n"
-            f"<b>👤 ᴜsᴇʀ :</b> {m.from_user.mention} [<code>{m.from_user.id}</code>]\n"
-            f"<b>📝 ᴛɪᴛʟᴇ :</b> <a href='{m.link}'>{title}</a>\n"
-            f"<b>⏳ ᴅᴜʀᴀᴛɪᴏɴ :</b> {duration}</blockquote>"
+            "<blockquote><b>🎵 Nᴇᴡ Mᴇᴅɪᴀ Pʟᴀʏᴇᴅ</b>\n\n"
+            f"<b>🥀 Cʜᴀᴛ :</b> {m.chat.title} [<code>{m.chat.id}</code>]\n"
+            f"<b>👤 Usᴇʀ :</b> {m.from_user.mention} [<code>{m.from_user.id}</code>]\n"
+            f"<b>📝 Tɪᴛʟᴇ :</b> <a href='{m.link}'>{title}</a>\n"
+            f"<b>⏳ Dᴜʀᴀᴛɪᴏɴ :</b> {duration}</blockquote>"
         )
         
         # 🔗 Auto Invite Link Generation for Play Logs
@@ -118,7 +118,7 @@ class Utilities:
             chat_url = m.link
             
         reply_markup = types.InlineKeyboardMarkup([
-            [types.InlineKeyboardButton("💬 ᴄʜᴀᴛ ʟɪɴᴋ", url=chat_url)]
+            [types.InlineKeyboardButton("💬 Cʜᴀᴛ Lɪɴᴋ", url=chat_url)]
         ])
         
         try:
@@ -147,21 +147,21 @@ class Utilities:
 
             if action == "added":
                 log_text = (
-                    "<blockquote><b>✅ ʙᴏᴛ ᴀᴅᴅᴇᴅ ᴛᴏ ɢʀᴏᴜᴘ</b>\n\n"
-                    f"<b>🥀 ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {m.chat.title}\n"
-                    f"<b>🍂 ᴄʜᴀᴛ ɪᴅ :</b> <code>{chat_id}</code>\n"
-                    f"<b>👤 ᴀᴅᴅᴇᴅ ʙʏ :</b> {user.mention if user else 'Anonymous'}\n"
-                    f"<b>👑 ᴏᴡɴᴇʀ :</b> {owner}\n"
-                    f"<b>👥 ᴛᴏᴛᴀʟ ᴜsᴇʀs :</b> {members_count}</blockquote>"
+                    "<blockquote><b>✅ Bᴏᴛ Aᴅᴅᴇᴅ Tᴏ Gʀᴏᴜᴘ</b>\n\n"
+                    f"<b>🥀 Cʜᴀᴛ Nᴀᴍᴇ :</b> {m.chat.title}\n"
+                    f"<b>🍂 Cʜᴀᴛ ID :</b> <code>{chat_id}</code>\n"
+                    f"<b>👤 Aᴅᴅᴇᴅ Bʏ :</b> {user.mention if user else 'Anonymous'}\n"
+                    f"<b>👑 Oᴡɴᴇʀ :</b> {owner}\n"
+                    f"<b>👥 Tᴏᴛᴀʟ Usᴇʀs :</b> {members_count}</blockquote>"
                 )
             else:
                 log_text = (
-                    "<blockquote><b>❌ ʙᴏᴛ ʀᴇᴍᴏᴠᴇᴅ ꜰʀᴏᴍ ɢʀᴏᴜᴘ</b>\n\n"
-                    f"<b>🥀 ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {m.chat.title}\n"
-                    f"<b>🍂 ᴄʜᴀᴛ ɪᴅ :</b> <code>{chat_id}</code>\n"
-                    f"<b>👤 ʀᴇᴍᴏᴠᴇᴅ ʙʏ :</b> {user.mention if user else 'Anonymous'}\n"
-                    f"<b>👑 ᴏᴡɴᴇʀ :</b> {owner}\n"
-                    f"<b>👥 ᴛᴏᴛᴀʟ ᴜsᴇʀs :</b> {members_count}</blockquote>"
+                    "<blockquote><b>❌ Bᴏᴛ Rᴇᴍᴏᴠᴇᴅ Fʀᴏᴍ Gʀᴏᴜᴘ</b>\n\n"
+                    f"<b>🥀 Cʜᴀᴛ Nᴀᴍᴇ :</b> {m.chat.title}\n"
+                    f"<b>🍂 Cʜᴀᴛ ID :</b> <code>{chat_id}</code>\n"
+                    f"<b>👤 Rᴇᴍᴏᴠᴇᴅ Bʏ :</b> {user.mention if user else 'Anonymous'}\n"
+                    f"<b>👑 Oᴡɴᴇʀ :</b> {owner}\n"
+                    f"<b>👥 Tᴏᴛᴀʟ Usᴇʀs :</b> {members_count}</blockquote>"
                 )
 
             # 🔗 Auto Invite Link Generation for Added/Removed Logs
@@ -174,7 +174,7 @@ class Utilities:
                 chat_url = f"https://t.me/c/{str(chat_id).replace('-100', '')}/1"
 
             reply_markup = types.InlineKeyboardMarkup([
-                [types.InlineKeyboardButton("💬 ᴄʜᴀᴛ ʟɪɴᴋ", url=chat_url)]
+                [types.InlineKeyboardButton("💬 Cʜᴀᴛ Lɪɴᴋ", url=chat_url)]
             ])
 
             try:
@@ -193,15 +193,15 @@ class Utilities:
                 return 
 
             log_text = (
-                "<blockquote><b>👤 ɴᴇᴡ ᴜsᴇʀ sᴛᴀʀᴛᴇᴅ</b>\n\n"
-                f"<b>🥀 ɴᴀᴍᴇ :</b> {m.from_user.mention}\n"
-                f"<b>🍂 ɪᴅ :</b> <code>{m.from_user.id}</code>\n"
-                f"<b>🔗 ᴜsᴇʀɴᴀᴍᴇ :</b> @{m.from_user.username or 'None'}</blockquote>"
+                "<blockquote><b>👤 Nᴇᴡ Usᴇʀ Sᴛᴀʀᴛᴇᴅ</b>\n\n"
+                f"<b>🥀 Nᴀᴍᴇ :</b> {m.from_user.mention}\n"
+                f"<b>🍂 ID :</b> <code>{m.from_user.id}</code>\n"
+                f"<b>🔗 Usᴇʀɴᴀᴍᴇ :</b> @{m.from_user.username or 'None'}</blockquote>"
             )
 
             user_url = f"tg://user?id={m.from_user.id}"
             reply_markup = types.InlineKeyboardMarkup([
-                [types.InlineKeyboardButton("👤 ᴜsᴇʀ ᴘʀᴏꜰɪʟᴇ", url=user_url)]
+                [types.InlineKeyboardButton("👤 Usᴇʀ Pʀᴏꜰɪʟᴇ", url=user_url)]
             ])
 
             try:
@@ -227,11 +227,11 @@ class Utilities:
             return
             
         log_text = (
-            "<blockquote><b>🔁 ᴀᴜᴛᴏ-ᴘʟᴀʏ ᴛʀᴀᴄᴋ sᴛᴀʀᴛᴇᴅ</b>\n\n"
-            f"<b>🥀 ɢʀᴏᴜᴘ :</b> {chat.title} [<code>{chat.id}</code>]\n"
-            f"<b>🎵 ᴘʟᴀʏɪɴɢ :</b> <a href='{playing_link}'>{playing_title}</a>\n"
-            f"<b>🔗 ᴍᴀᴛᴄʜᴇᴅ ᴡɪᴛʜ :</b> {matched_with}\n"
-            f"<b>⏭ ᴜᴘᴄᴏᴍɪɴɢ :</b> {upcoming_title}</blockquote>"
+            "<blockquote><b>🔁 Aᴜᴛᴏ-Pʟᴀʏ Tʀᴀᴄᴋ Sᴛᴀʀᴛᴇᴅ</b>\n\n"
+            f"<b>🥀 Gʀᴏᴜᴘ :</b> {chat.title} [<code>{chat.id}</code>]\n"
+            f"<b>🎵 Pʟᴀʏɪɴɢ :</b> <a href='{playing_link}'>{playing_title}</a>\n"
+            f"<b>🔗 Mᴀᴛᴄʜᴇᴅ Wɪᴛʜ :</b> {matched_with}\n"
+            f"<b>⏭ Uᴘᴄᴏᴍɪɴɢ :</b> {upcoming_title}</blockquote>"
         )
         
         # 🔗 Auto Invite Link Generation for Autoplay Logs
