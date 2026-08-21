@@ -73,6 +73,8 @@ def handle_asyncio_exceptions(loop, context):
         "no active group call",
         "group call has already ended",
         "not in a call",
+        "connection not found",
+        "connectionnotfound",
     ]
 
     if any(
@@ -82,7 +84,7 @@ def handle_asyncio_exceptions(loop, context):
         logging.getLogger(
             "asyncio"
         ).info(
-            f"ℹ️ VC State Sync (Harmless): {msg}"
+            f"ℹ️ VC State Sync: {msg}"
         )
     else:
         logging.getLogger(
@@ -103,13 +105,20 @@ loop.set_exception_handler(
 
 
 # ==========================================
-# DELETE MESSAGE
+# AUTOPLAY NOTICE DELETE
 # ==========================================
 
 async def _delete_msg(
     msg: Message,
     delay: int = 6,
 ):
+    """
+    This is ONLY used for temporary autoplay
+    notices.
+
+    VC join/leave/mute/unmute notifications
+    are NOT deleted from this file.
+    """
     try:
         await asyncio.sleep(delay)
         await msg.delete()
@@ -309,7 +318,6 @@ class TgCall(PyTgCalls):
 
             await asyncio.sleep(2)
 
-            # Queue prefetch
             try:
 
                 q = queue.get(chat_id)
@@ -345,7 +353,6 @@ class TgCall(PyTgCalls):
             except Exception:
                 pass
 
-            # Autoplay prefetch
             if await db.get_autoplay(
                 chat_id
             ):
@@ -506,7 +513,6 @@ class TgCall(PyTgCalls):
         except Exception:
             pass
 
-        # Safe VC leave
         try:
 
             await client.leave_call(
@@ -529,6 +535,8 @@ class TgCall(PyTgCalls):
                 "not in a call",
                 "groupcall_forbidden",
                 "groupcall_invalid",
+                "connection not found",
+                "connectionnotfound",
             ]
 
             if any(
@@ -617,7 +625,6 @@ class TgCall(PyTgCalls):
             ),
         )
 
-        # 720p -> 480p fallback
         try:
 
             await client.play(
@@ -779,11 +786,9 @@ class TgCall(PyTgCalls):
                 )
             ):
 
-                related = (
-                    self.pending_autoplay.pop(
-                        chat_id,
-                        None,
-                    )
+                related = self.pending_autoplay.pop(
+                    chat_id,
+                    None,
                 )
 
                 if not related:
@@ -915,7 +920,6 @@ class TgCall(PyTgCalls):
                             "Unknown Chat"
                         )
 
-                    # Spotify-style vibe checker
                     title_lower = (
                         current.title.lower()
                         if current
@@ -1149,7 +1153,6 @@ class TgCall(PyTgCalls):
             chat_id
         )
 
-        # Stream API
         if not media.file_path:
 
             msg = await app.send_message(
@@ -1202,10 +1205,58 @@ class TgCall(PyTgCalls):
             for client in self.clients
         ]
 
+        if not pings:
+            return 0.0
+
         return round(
             sum(pings) / len(pings),
             2,
         )
+
+
+    # ======================================
+    # VC PARTICIPANT ACTION HELPER
+    # ======================================
+
+    @staticmethod
+    def _participant_action_name(
+        action,
+    ) -> str:
+
+        if action is None:
+            return ""
+
+        try:
+            name = getattr(
+                action,
+                "name",
+                None,
+            )
+
+            if name:
+                return str(
+                    name
+                ).lower()
+        except Exception:
+            pass
+
+        try:
+            value = getattr(
+                action,
+                "value",
+                None,
+            )
+
+            if value:
+                return str(
+                    value
+                ).lower()
+        except Exception:
+            pass
+
+        return str(
+            action
+        ).lower()
 
 
     # ======================================
@@ -1229,174 +1280,189 @@ class TgCall(PyTgCalls):
             update: types.Update,
         ) -> None:
 
-            # ==================================
-            # STREAM ENDED
-            # ==================================
+            try:
 
-            if isinstance(
-                update,
-                types.StreamEnded,
-            ):
+                # ==================================
+                # STREAM ENDED
+                # ==================================
 
-                if (
-                    update.stream_type
-                    == types.StreamEnded.Type.AUDIO
+                if isinstance(
+                    update,
+                    types.StreamEnded,
                 ):
 
-                    await self.play_next(
-                        update.chat_id
-                    )
+                    if (
+                        update.stream_type
+                        == types.StreamEnded.Type.AUDIO
+                    ):
 
-                return
+                        await self.play_next(
+                            update.chat_id
+                        )
 
-
-            # ==================================
-            # CHAT / VC CLOSED
-            # ==================================
-
-            if isinstance(
-                update,
-                types.ChatUpdate,
-            ):
-
-                if update.status in [
-                    types.ChatUpdate.Status.KICKED,
-                    types.ChatUpdate.Status.LEFT_GROUP,
-                    types.ChatUpdate.Status.CLOSED_VOICE_CHAT,
-                ]:
-
-                    await self.stop(
-                        update.chat_id
-                    )
-
-                return
+                    return
 
 
-            # ==================================
-            # VC PARTICIPANT UPDATE
-            # ==================================
+                # ==================================
+                # CHAT / VC CLOSED
+                # ==================================
 
-            if (
-                participant_update
-                and isinstance(
+                if isinstance(
                     update,
-                    participant_update,
+                    types.ChatUpdate,
+                ):
+
+                    if update.status in [
+                        types.ChatUpdate.Status.KICKED,
+                        types.ChatUpdate.Status.LEFT_GROUP,
+                        types.ChatUpdate.Status.CLOSED_VOICE_CHAT,
+                    ]:
+
+                        await self.stop(
+                            update.chat_id
+                        )
+
+                    return
+
+
+                # ==================================
+                # PARTICIPANT UPDATE
+                # ==================================
+
+                if not (
+                    participant_update
+                    and isinstance(
+                        update,
+                        participant_update,
+                    )
+                ):
+                    return
+
+
+                # ----------------------------------
+                # CHAT ID
+                # ----------------------------------
+
+                chat_id = getattr(
+                    update,
+                    "chat_id",
+                    None,
                 )
-            ):
 
-                try:
+                if not chat_id:
+                    return
 
-                    chat_id = getattr(
-                        update,
-                        "chat_id",
-                        None,
-                    )
 
-                    if not chat_id:
-                        return
+                # ----------------------------------
+                # PARTICIPANT
+                # ----------------------------------
 
-                    participant = getattr(
-                        update,
-                        "participant",
-                        None,
-                    )
+                participant = getattr(
+                    update,
+                    "participant",
+                    None,
+                )
 
-                    if participant is None:
-                        return
+                if participant is None:
+                    return
 
-                    # ------------------------------
-                    # USER ID
-                    # ------------------------------
+
+                # ----------------------------------
+                # USER ID
+                # ----------------------------------
+
+                user_id = getattr(
+                    participant,
+                    "user_id",
+                    None,
+                )
+
+                if user_id is None:
 
                     user_id = getattr(
-                        participant,
+                        update,
                         "user_id",
                         None,
                     )
 
-                    if user_id is None:
+                if user_id is None:
+
+                    user = getattr(
+                        participant,
+                        "user",
+                        None,
+                    )
+
+                    if user is not None:
 
                         user_id = getattr(
-                            update,
-                            "user_id",
+                            user,
+                            "id",
                             None,
                         )
 
-                    if not user_id:
-                        return
+                if not user_id:
+                    return
 
-                    # ------------------------------
-                    # ACTION
-                    # ------------------------------
+
+                # ----------------------------------
+                # ACTION
+                # ----------------------------------
+
+                action = getattr(
+                    update,
+                    "action",
+                    None,
+                )
+
+                if action is None:
 
                     action = getattr(
-                        update,
+                        participant,
                         "action",
                         None,
                     )
 
-                    if action is None:
-
-                        action = getattr(
-                            participant,
-                            "action",
-                            None,
-                        )
-
-                    # ==================================
-                    # JOIN
-                    # ==================================
-
-                    if (
+                action_name = (
+                    self._participant_action_name(
                         action
-                        == types.GroupCallParticipant.Action.JOINED
-                    ):
+                    )
+                )
+
+
+                logger.debug(
+                    "[VCLogger] Participant update "
+                    f"chat={chat_id} "
+                    f"user={user_id} "
+                    f"action={action_name} "
+                    f"muted={getattr(participant, 'muted', None)}"
+                )
+
+
+                # ==================================
+                # JOIN
+                # ==================================
+
+                is_join = (
+                    "join" in action_name
+                    or "joined" in action_name
+                )
+
+                if is_join:
+
+                    try:
 
                         await vclogger.notify_join(
                             chat_id,
                             user_id,
                         )
 
-                        muted = getattr(
-                            participant,
-                            "muted",
-                            None,
+                    except Exception as e:
+
+                        logger.error(
+                            "[VCLogger] Join notification "
+                            f"error: {e}"
                         )
-
-                        if muted is not None:
-
-                            vclogger.mute_state[
-                                (
-                                    chat_id,
-                                    user_id,
-                                )
-                            ] = bool(
-                                muted
-                            )
-
-                        return
-
-
-                    # ==================================
-                    # LEAVE
-                    # ==================================
-
-                    if (
-                        action
-                        == types.GroupCallParticipant.Action.LEFT
-                    ):
-
-                        await vclogger.notify_leave(
-                            chat_id,
-                            user_id,
-                        )
-
-                        return
-
-
-                    # ==================================
-                    # MUTE / UNMUTE
-                    # ==================================
 
                     muted = getattr(
                         participant,
@@ -1404,75 +1470,197 @@ class TgCall(PyTgCalls):
                         None,
                     )
 
-                    if muted is None:
-                        return
-
-                    key = (
-                        chat_id,
-                        user_id,
-                    )
-
-                    old_muted = (
-                        vclogger.mute_state.get(
-                            key,
-                            None,
-                        )
-                    )
-
-                    new_muted = bool(
-                        muted
-                    )
-
-                    # First state:
-                    # save only, don't notify
-                    if old_muted is None:
+                    if muted is not None:
 
                         vclogger.mute_state[
-                            key
-                        ] = new_muted
+                            (
+                                chat_id,
+                                user_id,
+                            )
+                        ] = bool(
+                            muted
+                        )
 
-                        return
+                    else:
+
+                        # Unknown initial state.
+                        # Do not create a fake mute event.
+                        vclogger.mute_state.pop(
+                            (
+                                chat_id,
+                                user_id,
+                            ),
+                            None,
+                        )
+
+                    return
 
 
-                    # ==================================
-                    # MUTED
-                    # ==================================
+                # ==================================
+                # LEAVE
+                # ==================================
 
-                    if (
-                        old_muted is False
-                        and new_muted is True
-                    ):
+                is_leave = (
+                    "leave" in action_name
+                    or "left" in action_name
+                )
+
+                if is_leave:
+
+                    try:
+
+                        await vclogger.notify_leave(
+                            chat_id,
+                            user_id,
+                        )
+
+                    except Exception as e:
+
+                        logger.error(
+                            "[VCLogger] Leave notification "
+                            f"error: {e}"
+                        )
+
+                    vclogger.mute_state.pop(
+                        (
+                            chat_id,
+                            user_id,
+                        ),
+                        None,
+                    )
+
+                    return
+
+
+                # ==================================
+                # MUTE STATE
+                # ==================================
+
+                muted = getattr(
+                    participant,
+                    "muted",
+                    None,
+                )
+
+                if muted is None:
+
+                    # Some pytgcalls/ntgcalls versions
+                    # expose is_muted instead.
+                    muted = getattr(
+                        participant,
+                        "is_muted",
+                        None,
+                    )
+
+                if muted is None:
+                    return
+
+
+                new_muted = bool(
+                    muted
+                )
+
+                key = (
+                    chat_id,
+                    user_id,
+                )
+
+                old_muted = (
+                    vclogger.mute_state.get(
+                        key,
+                        None,
+                    )
+                )
+
+
+                # ==================================
+                # FIRST KNOWN STATE
+                # ==================================
+
+                if old_muted is None:
+
+                    vclogger.mute_state[
+                        key
+                    ] = new_muted
+
+                    return
+
+
+                # ==================================
+                # NO CHANGE
+                # ==================================
+
+                if old_muted == new_muted:
+                    return
+
+
+                # Save new state BEFORE notification
+                # so duplicate updates don't trigger
+                # duplicate messages.
+                vclogger.mute_state[
+                    key
+                ] = new_muted
+
+
+                # ==================================
+                # MUTED
+                # ==================================
+
+                if (
+                    old_muted is False
+                    and new_muted is True
+                ):
+
+                    try:
 
                         await vclogger.notify_mute(
                             chat_id,
                             user_id,
                         )
 
-                        return
+                    except Exception as e:
+
+                        logger.error(
+                            "[VCLogger] Mute notification "
+                            f"error: {e}"
+                        )
+
+                    return
 
 
-                    # ==================================
-                    # UNMUTED
-                    # ==================================
+                # ==================================
+                # UNMUTED
+                # ==================================
 
-                    if (
-                        old_muted is True
-                        and new_muted is False
-                    ):
+                if (
+                    old_muted is True
+                    and new_muted is False
+                ):
+
+                    try:
 
                         await vclogger.notify_unmute(
                             chat_id,
                             user_id,
                         )
 
-                        return
+                    except Exception as e:
 
-                except Exception as e:
+                        logger.error(
+                            "[VCLogger] Unmute notification "
+                            f"error: {e}"
+                        )
 
-                    logger.error(
-                        "[VCLogger] Participant "
-                        f"update error: {e}"
-                    )
+                    return
+
+
+            except Exception as e:
+
+                logger.error(
+                    "[VCLogger] Participant update "
+                    f"handler error: {e}",
+                    exc_info=True,
+                )
 
 
     # ======================================
