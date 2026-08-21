@@ -4,7 +4,10 @@
 
 import asyncio
 
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 
 from AloneX import app, logger
 
@@ -12,16 +15,16 @@ from AloneX import app, logger
 DELETE_DELAY = 7
 
 # Premium Custom Emoji ID
-PROFILE_EMOJI_ID = 5217822164362739968
+PROFILE_EMOJI_ID = "5217822164362739968"
 
 
 class VCLogger:
+
     def __init__(self):
         self.join_count: dict[tuple, int] = {}
         self.user_cache: dict[int, tuple] = {}
 
-        # Track participant mute state:
-        # (chat_id, user_id) -> True/False
+        # (chat_id, user_id) -> True / False
         self.mute_state: dict[tuple, bool] = {}
 
     # =========================================================
@@ -34,8 +37,10 @@ class VCLogger:
         user_id: int,
     ) -> tuple:
 
-        if user_id in self.user_cache:
-            return self.user_cache[user_id]
+        cache_key = (chat_id, user_id)
+
+        if cache_key in self.user_cache:
+            return self.user_cache[cache_key]
 
         name = "User"
         username = None
@@ -47,19 +52,28 @@ class VCLogger:
             )
 
             if member and member.user:
+
                 user = member.user
 
-                name = user.first_name or "User"
+                name = (
+                    user.first_name
+                    or "User"
+                )
 
                 if user.last_name:
-                    name += f" {user.last_name}"
+                    name += (
+                        f" {user.last_name}"
+                    )
 
                 username = user.username
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(
+                f"[VCLogger] User info error "
+                f"{chat_id}/{user_id}: {e}"
+            )
 
-        self.user_cache[user_id] = (
+        self.user_cache[cache_key] = (
             name,
             username,
         )
@@ -74,17 +88,52 @@ class VCLogger:
         self,
         user_id: int,
         name: str,
+        username: str | None = None,
     ) -> InlineKeyboardMarkup:
+
+        # Username available -> show it on button.
+        # Username unavailable -> use name.
+        if username:
+            button_text = (
+                f"👤 {name} "
+                f"({username})"
+            )
+        else:
+            button_text = (
+                f"👤 {name}"
+            )
 
         return InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        text=f"👤 {name}",
+                        text=button_text,
                         url=f"tg://user?id={user_id}",
                     )
                 ]
             ]
+        )
+
+    # =========================================================
+    # PREMIUM EMOJI
+    # =========================================================
+
+    @staticmethod
+    def _premium_emoji(
+        fallback: str = "✨",
+    ) -> str:
+
+        # Telegram HTML custom emoji.
+        #
+        # The fallback character is only used as
+        # the visible placeholder inside the tag.
+        #
+        # Telegram uses emoji-id to render the
+        # actual premium custom emoji.
+        return (
+            f'<tg-emoji emoji-id="{PROFILE_EMOJI_ID}">'
+            f'{fallback}'
+            f'</tg-emoji>'
         )
 
     # =========================================================
@@ -98,6 +147,7 @@ class VCLogger:
     ) -> None:
 
         try:
+
             await asyncio.sleep(
                 DELETE_DELAY
             )
@@ -120,18 +170,22 @@ class VCLogger:
         user_id: int,
         text: str,
         name: str,
+        username: str | None = None,
     ) -> None:
 
         try:
+
             keyboard = self._profile_button(
-                user_id,
-                name,
+                user_id=user_id,
+                name=name,
+                username=username,
             )
 
             msg = await app.send_message(
                 chat_id=chat_id,
                 text=text,
                 reply_markup=keyboard,
+                disable_web_page_preview=True,
             )
 
             asyncio.create_task(
@@ -144,8 +198,8 @@ class VCLogger:
         except Exception as e:
 
             logger.error(
-                f"[VCLogger] Failed to send "
-                f"VC notification for {chat_id}: {e}"
+                "[VCLogger] Failed to send "
+                f"notification in {chat_id}: {e}"
             )
 
     # =========================================================
@@ -158,7 +212,6 @@ class VCLogger:
         user_id: int,
     ) -> None:
 
-        # Ignore invalid IDs
         if not user_id:
             return
 
@@ -184,20 +237,27 @@ class VCLogger:
             )
         )
 
+        emoji = self._premium_emoji(
+            "🎧"
+        )
+
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "      🎧 Jᴏɪɴᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            f"     {emoji} <b>Jᴏɪɴᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             f"<b>◈ Nᴀᴍᴇ:</b>\n"
             f"<b>{name}</b>\n\n"
 
             f"<b>◈ Uѕᴇʀ ID:</b>\n"
-            f"<code>{user_id}</code>\n\n"
-
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Wᴇʟᴄᴏᴍᴇ Tᴏ Tʜᴇ Vᴏɪᴄᴇ Cʜᴀᴛ ✦</b>"
+            f"<code>{user_id}</code>"
         )
+
+        if username:
+            text += (
+                f"\n\n<b>◈ Uѕᴇʀɴᴀᴍᴇ:</b>\n"
+                f"<b>@{username}</b>"
+            )
 
         if count > 1:
             text += (
@@ -205,11 +265,19 @@ class VCLogger:
                 f"<code>{count}</code>"
             )
 
+        text += (
+            "\n\n"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            f"{self._premium_emoji('✦')} "
+            "<b>Wᴇʟᴄᴏᴍᴇ Tᴏ Tʜᴇ Vᴏɪᴄᴇ Cʜᴀᴛ</b>"
+        )
+
         await self._send(
             chat_id,
             user_id,
             text,
             name,
+            username,
         )
 
     # =========================================================
@@ -233,18 +301,29 @@ class VCLogger:
         )
 
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔇 Lᴇғᴛ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            f"     {self._premium_emoji('🚪')} "
+            "<b>Lᴇғᴛ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             f"<b>◈ Nᴀᴍᴇ:</b>\n"
             f"<b>{name}</b>\n\n"
 
             f"<b>◈ Uѕᴇʀ ID:</b>\n"
-            f"<code>{user_id}</code>\n\n"
+            f"<code>{user_id}</code>"
+        )
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Tʜᴀɴᴋ Yᴏᴜ Fᴏʀ Jᴏɪɴɪɴɢ ✦</b>"
+        if username:
+            text += (
+                f"\n\n<b>◈ Uѕᴇʀɴᴀᴍᴇ:</b>\n"
+                f"<b>@{username}</b>"
+            )
+
+        text += (
+            "\n\n"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            f"{self._premium_emoji('✦')} "
+            "<b>Uɴᴛɪʟ Nᴇxᴛ Tɪᴍᴇ</b>"
         )
 
         await self._send(
@@ -252,9 +331,9 @@ class VCLogger:
             user_id,
             text,
             name,
+            username,
         )
 
-        # Remove mute state when user leaves
         self.mute_state.pop(
             (chat_id, user_id),
             None,
@@ -278,7 +357,7 @@ class VCLogger:
             user_id,
         )
 
-        # Prevent duplicate mute notifications
+        # Prevent duplicate notifications.
         if self.mute_state.get(
             key
         ) is True:
@@ -294,18 +373,29 @@ class VCLogger:
         )
 
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔕 Mᴜᴛᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            f"     {self._premium_emoji('🔇')} "
+            "<b>Mᴜᴛᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             f"<b>◈ Nᴀᴍᴇ:</b>\n"
             f"<b>{name}</b>\n\n"
 
             f"<b>◈ Uѕᴇʀ ID:</b>\n"
-            f"<code>{user_id}</code>\n\n"
+            f"<code>{user_id}</code>"
+        )
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Mᴜᴛᴇᴅ ✦</b>"
+        if username:
+            text += (
+                f"\n\n<b>◈ Uѕᴇʀɴᴀᴍᴇ:</b>\n"
+                f"<b>@{username}</b>"
+            )
+
+        text += (
+            "\n\n"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            f"{self._premium_emoji('✦')} "
+            "<b>Mɪᴄʀᴏᴘʜᴏɴᴇ Mᴜᴛᴇᴅ</b>"
         )
 
         await self._send(
@@ -313,6 +403,7 @@ class VCLogger:
             user_id,
             text,
             name,
+            username,
         )
 
     # =========================================================
@@ -333,7 +424,7 @@ class VCLogger:
             user_id,
         )
 
-        # Prevent duplicate unmute notifications
+        # Only notify when previous state was muted.
         if self.mute_state.get(
             key
         ) is not True:
@@ -349,18 +440,29 @@ class VCLogger:
         )
 
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔊 Uɴᴍᴜᴛᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            f"     {self._premium_emoji('🔊')} "
+            "<b>Uɴᴍᴜᴛᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             f"<b>◈ Nᴀᴍᴇ:</b>\n"
             f"<b>{name}</b>\n\n"
 
             f"<b>◈ Uѕᴇʀ ID:</b>\n"
-            f"<code>{user_id}</code>\n\n"
+            f"<code>{user_id}</code>"
+        )
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Uɴᴍᴜᴛᴇᴅ ✦</b>"
+        if username:
+            text += (
+                f"\n\n<b>◈ Uѕᴇʀɴᴀᴍᴇ:</b>\n"
+                f"<b>@{username}</b>"
+            )
+
+        text += (
+            "\n\n"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            f"{self._premium_emoji('✦')} "
+            "<b>Mɪᴄʀᴏᴘʜᴏɴᴇ Uɴᴍᴜᴛᴇᴅ</b>"
         )
 
         await self._send(
@@ -368,10 +470,11 @@ class VCLogger:
             user_id,
             text,
             name,
+            username,
         )
 
     # =========================================================
-    # CLEAN CHAT CACHE
+    # CLEAN CHAT
     # =========================================================
 
     def clear_chat(
@@ -390,6 +493,12 @@ class VCLogger:
         ):
             if key[0] == chat_id:
                 del self.mute_state[key]
+
+        for key in list(
+            self.user_cache
+        ):
+            if key[0] == chat_id:
+                del self.user_cache[key]
 
 
 vclogger = VCLogger()
