@@ -150,7 +150,7 @@ class Inline:
             keyboard.append(
                 [
                     self.ikb(text="▶️ 𝐀ᴜᴛᴏ-𝐏ʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
-                    self.ikb(text="ᴄʟᴏɴᴇ-ᴍᴇ", url="https://t.me/clone_MUSICrobot", style=style[2]),
+                    self.ikb(text="Aᴅᴅ Mᴇ", url="https://t.me/{app.username}?startgroup=true", style=style[0]),
                 ]
             )
             
@@ -159,11 +159,6 @@ class Inline:
                 
             keyboard.append(
                 [
-                    self.ikb(
-                        text="➕ Add Me",
-                        url=f"https://t.me/{app.username}?startgroup=true",
-                        style=style[0],
-                    ),
                     self.ikb(
                         text=_lang.get("close", "⌯ 𝐂ʟσsє ⌯"),
                         callback_data="close",
