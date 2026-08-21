@@ -79,14 +79,6 @@ except Exception:
 # ============================================================
 
 def time_to_seconds(time_str: str) -> int:
-    """
-    Convert:
-        HH:MM:SS
-        MM:SS
-        SS
-    into seconds.
-    """
-
     try:
         parts = str(time_str).strip().split(":")
 
@@ -127,11 +119,6 @@ class Inline:
     # ========================================================
 
     def _get_emoji_id(self, key):
-        """
-        Safely return a custom emoji ID.
-        Always returns str or None.
-        """
-
         if not key:
             key = "default"
 
@@ -168,10 +155,6 @@ class Inline:
         )
 
         rules = (
-            # ------------------------------------------------
-            # AUTOPLAY
-            # ------------------------------------------------
-
             (
                 "autoplay_disable",
                 (
@@ -180,7 +163,6 @@ class Inline:
                     "dɪsᴀʙʟᴇ",
                 ),
             ),
-
             (
                 "autoplay_status",
                 (
@@ -190,7 +172,6 @@ class Inline:
                     "disabled",
                 ),
             ),
-
             (
                 "autoplay",
                 (
@@ -198,11 +179,6 @@ class Inline:
                     "aᴜᴛᴏ pʟᴀʏ",
                 ),
             ),
-
-            # ------------------------------------------------
-            # PLAYER
-            # ------------------------------------------------
-
             (
                 "pause",
                 (
@@ -210,7 +186,6 @@ class Inline:
                     "iɪ",
                 ),
             ),
-
             (
                 "replay",
                 (
@@ -218,15 +193,14 @@ class Inline:
                     "⥁",
                 ),
             ),
-
             (
                 "skip",
                 (
                     "controls skip",
                     "‣‣i",
+                    "‣‣I",
                 ),
             ),
-
             (
                 "stop",
                 (
@@ -234,7 +208,6 @@ class Inline:
                     "▢",
                 ),
             ),
-
             (
                 "play",
                 (
@@ -242,18 +215,12 @@ class Inline:
                     "▷",
                 ),
             ),
-
             (
                 "force_play",
                 (
                     "controls force",
                 ),
             ),
-
-            # ------------------------------------------------
-            # COMMON
-            # ------------------------------------------------
-
             (
                 "close",
                 (
@@ -261,7 +228,6 @@ class Inline:
                     "cʟᴏsᴇ",
                 ),
             ),
-
             (
                 "back",
                 (
@@ -269,7 +235,6 @@ class Inline:
                     "bᴀᴄᴋ",
                 ),
             ),
-
             (
                 "home",
                 (
@@ -277,14 +242,12 @@ class Inline:
                     "hᴏᴍᴇ",
                 ),
             ),
-
             (
                 "help",
                 (
                     "help",
                 ),
             ),
-
             (
                 "source",
                 (
@@ -292,7 +255,6 @@ class Inline:
                     "sᴏᴜʀᴄᴇ",
                 ),
             ),
-
             (
                 "support",
                 (
@@ -300,7 +262,6 @@ class Inline:
                     "sᴜᴘᴘᴏʀᴛ",
                 ),
             ),
-
             (
                 "language",
                 (
@@ -308,7 +269,6 @@ class Inline:
                     "lᴀɴɢᴜᴀɢᴇ",
                 ),
             ),
-
             (
                 "queue",
                 (
@@ -316,7 +276,6 @@ class Inline:
                     "qᴜᴇᴜᴇ",
                 ),
             ),
-
             (
                 "stats",
                 (
@@ -324,7 +283,6 @@ class Inline:
                     "sᴛᴀᴛs",
                 ),
             ),
-
             (
                 "admins",
                 (
@@ -332,7 +290,6 @@ class Inline:
                     "aᴅᴍɪɴs",
                 ),
             ),
-
             (
                 "auth",
                 (
@@ -340,7 +297,6 @@ class Inline:
                     "aᴜᴛʜ",
                 ),
             ),
-
             (
                 "blacklist",
                 (
@@ -348,7 +304,6 @@ class Inline:
                     "blacklist",
                 ),
             ),
-
             (
                 "sudo",
                 (
@@ -356,7 +311,6 @@ class Inline:
                     "sᴜᴅᴏ",
                 ),
             ),
-
             (
                 "vclogger",
                 (
@@ -364,7 +318,6 @@ class Inline:
                     "vᴄ ʟᴏɢɢᴇʀ",
                 ),
             ),
-
             (
                 "ping",
                 (
@@ -372,7 +325,6 @@ class Inline:
                     "pɪɴɢ",
                 ),
             ),
-
             (
                 "add",
                 (
@@ -380,21 +332,18 @@ class Inline:
                     "aᴅᴅ mᴇ",
                 ),
             ),
-
             (
                 "owner",
                 (
                     "tʜᴇ aʀᴄʜᴏɴ",
                 ),
             ),
-
             (
                 "youtube",
                 (
                     "youtube",
                 ),
             ),
-
             (
                 "copy",
                 (
@@ -402,7 +351,6 @@ class Inline:
                     "❐",
                 ),
             ),
-
             (
                 "updates",
                 (
@@ -429,16 +377,10 @@ class Inline:
         **kwargs,
     ):
         """
-        Central button builder.
+        Build a Kurigram/Pyrogram inline button.
 
-        Priority:
-        1. Explicit icon_custom_emoji_id
-        2. emoji_key
-        3. Automatic detection
-        4. default emoji
-
-        emoji_key is consumed here and is NEVER sent to
-        InlineKeyboardButton.
+        emoji_key is handled internally and is never forwarded
+        to InlineKeyboardButton.
         """
 
         explicit_id = kwargs.get(
@@ -539,10 +481,7 @@ class Inline:
             filled_blocks = 0
 
         filled_blocks = min(
-            max(
-                filled_blocks,
-                0,
-            ),
+            max(filled_blocks, 0),
             total_blocks,
         )
 
@@ -768,14 +707,18 @@ class Inline:
 
         if not remove:
 
-            # FIX:
-            # Use extend() here because we are adding
-            # TWO separate rows to the keyboard.
+            # IMPORTANT:
+            # Empty text means the old symbols
+            # (▷ Iɪ ⥁ ‣‣I ▢) will not appear.
+            #
+            # Premium/custom emoji is supplied through
+            # icon_custom_emoji_id.
+
             keyboard.extend(
                 [
                     [
                         self.ikb(
-                            text="▷",
+                            text="",
                             callback_data=(
                                 f"controls resume "
                                 f"{chat_id}"
@@ -785,7 +728,7 @@ class Inline:
                         ),
 
                         self.ikb(
-                            text="Iɪ",
+                            text="",
                             callback_data=(
                                 f"controls pause "
                                 f"{chat_id}"
@@ -795,7 +738,7 @@ class Inline:
                         ),
 
                         self.ikb(
-                            text="⥁",
+                            text="",
                             callback_data=(
                                 f"controls replay "
                                 f"{chat_id}"
@@ -807,7 +750,7 @@ class Inline:
 
                     [
                         self.ikb(
-                            text="‣‣I",
+                            text="",
                             callback_data=(
                                 f"controls skip "
                                 f"{chat_id}"
@@ -817,7 +760,7 @@ class Inline:
                         ),
 
                         self.ikb(
-                            text="▢",
+                            text="",
                             callback_data=(
                                 f"controls stop "
                                 f"{chat_id}"
@@ -1425,7 +1368,7 @@ class Inline:
             [
                 [
                     self.ikb(
-                        text="❐",
+                        text="",
                         copy_text=link,
                         style=style[0],
                         emoji_key="copy",
