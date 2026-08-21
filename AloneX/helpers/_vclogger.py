@@ -1,31 +1,39 @@
 # Copyright (c) 2025 TheHamkerAlone
 # Licensed under the MIT License.
-# This file is part of AloneXMusic
+# This file is part of AloneX
 
 import asyncio
 
-from pyrogram.enums import MessageEntityType
+from pyrogram import enums
 from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
-    MessageEntity,
 )
 
 from AloneX import app, logger
 
 
-DELETE_DELAY = 7
+# ============================================================
+# SETTINGS
+# ============================================================
 
-# =========================================================
+# 0 = notification delete nahi hogi
+DELETE_DELAY = 0
+
+
+# ============================================================
 # PREMIUM CUSTOM EMOJI
-# =========================================================
+# ============================================================
 
-PREMIUM_EMOJI_ID = 5217822164362739968
+# Tumhare inline.py me owner emoji wala ID.
+# Agar VC button ke liye alag emoji chahiye,
+# sirf ye ID replace kar dena.
+PROFILE_EMOJI_ID = 5217822164362739968
 
-# Fallback emoji MUST be a normal emoji.
-# Telegram custom emoji entity wraps the fallback emoji.
-PREMIUM_EMOJI_CHAR = "✨"
 
+# ============================================================
+# VC LOGGER
+# ============================================================
 
 class VCLogger:
 
@@ -38,9 +46,10 @@ class VCLogger:
         # (chat_id, user_id) -> True / False
         self.mute_state: dict[tuple, bool] = {}
 
-    # =========================================================
+
+    # ========================================================
     # USER INFO
-    # =========================================================
+    # ========================================================
 
     async def _get_user_info(
         self,
@@ -78,11 +87,30 @@ class VCLogger:
 
                 username = user.username
 
-        except Exception as e:
+        except Exception:
 
-            logger.debug(
-                f"[VCLogger] User info error: {e}"
-            )
+            # Fallback: directly get user
+            try:
+
+                user = await app.get_users(
+                    user_id
+                )
+
+                name = (
+                    user.first_name
+                    or "User"
+                )
+
+                if user.last_name:
+
+                    name += (
+                        f" {user.last_name}"
+                    )
+
+                username = user.username
+
+            except Exception:
+                pass
 
         self.user_cache[user_id] = (
             name,
@@ -91,9 +119,30 @@ class VCLogger:
 
         return name, username
 
-    # =========================================================
+
+    # ========================================================
+    # HTML ESCAPE
+    # ========================================================
+
+    @staticmethod
+    def _escape_html(
+        text: str,
+    ) -> str:
+
+        if not text:
+            return "User"
+
+        return (
+            str(text)
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+        )
+
+
+    # ========================================================
     # PROFILE BUTTON
-    # =========================================================
+    # ========================================================
 
     def _profile_button(
         self,
@@ -101,28 +150,39 @@ class VCLogger:
         name: str,
     ) -> InlineKeyboardMarkup:
 
+        safe_name = self._escape_html(
+            name
+        )
+
+        button = InlineKeyboardButton(
+            text=safe_name,
+            url=f"tg://user?id={user_id}",
+            icon_custom_emoji_id=str(
+                PROFILE_EMOJI_ID
+            ),
+        )
+
         return InlineKeyboardMarkup(
             [
-                [
-                    InlineKeyboardButton(
-                        text=f"👤 {name}",
-                        url=(
-                            f"tg://user?id={user_id}"
-                        ),
-                    )
-                ]
+                [button]
             ]
         )
 
-    # =========================================================
+
+    # ========================================================
     # DELETE MESSAGE
-    # =========================================================
+    # ========================================================
 
     async def _delete_later(
         self,
         chat_id: int,
         message_id: int,
     ) -> None:
+
+        # DELETE_DELAY = 0 hone par
+        # message permanently rahega.
+        if DELETE_DELAY <= 0:
+            return
 
         try:
 
@@ -138,9 +198,10 @@ class VCLogger:
         except Exception:
             pass
 
-    # =========================================================
+
+    # ========================================================
     # SEND MESSAGE
-    # =========================================================
+    # ========================================================
 
     async def _send(
         self,
@@ -152,69 +213,40 @@ class VCLogger:
 
         try:
 
-            keyboard = (
-                self._profile_button(
-                    user_id,
-                    name,
-                )
+            keyboard = self._profile_button(
+                user_id,
+                name,
             )
-
-            # -------------------------------------------------
-            # Premium custom emoji
-            # -------------------------------------------------
-            #
-            # We prepend one normal fallback emoji and attach
-            # a CUSTOM_EMOJI entity to exactly that character.
-            #
-            # Telegram requires the custom emoji entity to wrap
-            # the fallback emoji itself.
-            # -------------------------------------------------
-
-            final_text = (
-                f"{PREMIUM_EMOJI_CHAR} "
-                f"{text}"
-            )
-
-            entities = [
-                MessageEntity(
-                    type=(
-                        MessageEntityType
-                        .CUSTOM_EMOJI
-                    ),
-                    offset=0,
-                    length=len(
-                        PREMIUM_EMOJI_CHAR
-                    ),
-                    custom_emoji_id=(
-                        PREMIUM_EMOJI_ID
-                    ),
-                )
-            ]
 
             msg = await app.send_message(
                 chat_id=chat_id,
-                text=final_text,
-                entities=entities,
+                text=text,
                 reply_markup=keyboard,
+                parse_mode=enums.ParseMode.HTML,
+                disable_web_page_preview=True,
             )
 
-            asyncio.create_task(
-                self._delete_later(
-                    chat_id,
-                    msg.id,
+            # Sirf agar DELETE_DELAY > 0 ho
+            if DELETE_DELAY > 0:
+
+                asyncio.create_task(
+                    self._delete_later(
+                        chat_id,
+                        msg.id,
+                    )
                 )
-            )
 
         except Exception as e:
 
             logger.error(
                 "[VCLogger] Failed to send "
-                f"notification in {chat_id}: {e}"
+                f"VC notification in {chat_id}: {e}"
             )
 
-    # =========================================================
+
+    # ========================================================
     # JOIN
-    # =========================================================
+    # ========================================================
 
     async def notify_join(
         self,
@@ -247,25 +279,30 @@ class VCLogger:
             )
         )
 
+        safe_name = self._escape_html(
+            name
+        )
+
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "      🎧 Jᴏɪɴᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            "<b>      🎧 Jᴏɪɴᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
-            f"<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            "<b>◈ Nᴀᴍᴇ:</b>\n"
+            f"<b>{safe_name}</b>\n\n"
 
-            f"<b>◈ Uѕᴇʀ ID:</b>\n"
+            "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Wᴇʟᴄᴏᴍᴇ Tᴏ Tʜᴇ Vᴏɪᴄᴇ Cʜᴀᴛ ✦</b>"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            "<b>✦ Wᴇʟᴄᴏᴍᴇ Tᴏ Tʜᴇ Vᴏɪᴄᴇ Cʜᴀᴛ ✦</b>"
         )
 
         if count > 1:
 
             text += (
-                f"\n\n<b>↻ Jᴏɪɴ Cᴏᴜɴᴛ:</b> "
+                "\n\n"
+                "<b>↻ Jᴏɪɴ Cᴏᴜɴᴛ:</b> "
                 f"<code>{count}</code>"
             )
 
@@ -276,9 +313,10 @@ class VCLogger:
             name,
         )
 
-    # =========================================================
+
+    # ========================================================
     # LEAVE
-    # =========================================================
+    # ========================================================
 
     async def notify_leave(
         self,
@@ -296,19 +334,23 @@ class VCLogger:
             )
         )
 
+        safe_name = self._escape_html(
+            name
+        )
+
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔇 Lᴇғᴛ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            "<b>       🔇 Lᴇғᴛ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
-            f"<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            "<b>◈ Nᴀᴍᴇ:</b>\n"
+            f"<b>{safe_name}</b>\n\n"
 
-            f"<b>◈ Uѕᴇʀ ID:</b>\n"
+            "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Tʜᴀɴᴋ Yᴏᴜ Fᴏʀ Jᴏɪɴɪɴɢ ✦</b>"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            "<b>✦ Tʜᴀɴᴋ Yᴏᴜ Fᴏʀ Jᴏɪɴɪɴɢ ✦</b>"
         )
 
         await self._send(
@@ -318,14 +360,20 @@ class VCLogger:
             name,
         )
 
+        # User leave kar gaya,
+        # isliye mute state reset.
         self.mute_state.pop(
-            (chat_id, user_id),
+            (
+                chat_id,
+                user_id,
+            ),
             None,
         )
 
-    # =========================================================
+
+    # ========================================================
     # MUTE
-    # =========================================================
+    # ========================================================
 
     async def notify_mute(
         self,
@@ -341,10 +389,11 @@ class VCLogger:
             user_id,
         )
 
-        # Already muted
+        # Duplicate notification prevent
         if self.mute_state.get(
             key
         ) is True:
+
             return
 
         self.mute_state[key] = True
@@ -356,19 +405,23 @@ class VCLogger:
             )
         )
 
+        safe_name = self._escape_html(
+            name
+        )
+
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔕 Mᴜᴛᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            "<b>       🔕 Mᴜᴛᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
-            f"<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            "<b>◈ Nᴀᴍᴇ:</b>\n"
+            f"<b>{safe_name}</b>\n\n"
 
-            f"<b>◈ Uѕᴇʀ ID:</b>\n"
+            "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Mᴜᴛᴇᴅ ✦</b>"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            "<b>✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Mᴜᴛᴇᴅ ✦</b>"
         )
 
         await self._send(
@@ -378,9 +431,10 @@ class VCLogger:
             name,
         )
 
-    # =========================================================
+
+    # ========================================================
     # UNMUTE
-    # =========================================================
+    # ========================================================
 
     async def notify_unmute(
         self,
@@ -396,10 +450,12 @@ class VCLogger:
             user_id,
         )
 
-        # Not previously muted
+        # Agar pehle muted nahi tha
+        # to duplicate notification nahi.
         if self.mute_state.get(
             key
         ) is not True:
+
             return
 
         self.mute_state[key] = False
@@ -411,19 +467,23 @@ class VCLogger:
             )
         )
 
+        safe_name = self._escape_html(
+            name
+        )
+
         text = (
-            "<b>╭━━━━━━━━━━━━━━━━━━╮\n"
-            "       🔊 Uɴᴍᴜᴛᴇᴅ Vᴄ\n"
-            "╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+            "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+            "<b>       🔊 Uɴᴍᴜᴛᴇᴅ Vᴄ</b>\n"
+            "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
-            f"<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            "<b>◈ Nᴀᴍᴇ:</b>\n"
+            f"<b>{safe_name}</b>\n\n"
 
-            f"<b>◈ Uѕᴇʀ ID:</b>\n"
+            "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
 
-            "<b>━━━━━━━━━━━━━━━━━━\n"
-            "✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Uɴᴍᴜᴛᴇᴅ ✦</b>"
+            "<b>━━━━━━━━━━━━━━━━━━</b>\n"
+            "<b>✦ Mɪᴄʀᴏᴘʜᴏɴᴇ Uɴᴍᴜᴛᴇᴅ ✦</b>"
         )
 
         await self._send(
@@ -433,9 +493,10 @@ class VCLogger:
             name,
         )
 
-    # =========================================================
-    # CLEAN CHAT
-    # =========================================================
+
+    # ========================================================
+    # CLEAR CHAT
+    # ========================================================
 
     def clear_chat(
         self,
@@ -458,5 +519,9 @@ class VCLogger:
 
                 del self.mute_state[key]
 
+
+# ============================================================
+# GLOBAL INSTANCE
+# ============================================================
 
 vclogger = VCLogger()
