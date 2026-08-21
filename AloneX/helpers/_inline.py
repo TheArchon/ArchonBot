@@ -11,14 +11,6 @@ from AloneX.core.lang import lang_codes
 # ============================================================
 # PREMIUM / CUSTOM EMOJI IDS
 # ============================================================
-#
-# IMPORTANT:
-# These must be REAL Telegram custom emoji IDs.
-#
-# You can replace any ID below with your own valid ID.
-#
-# icon_custom_emoji_id is supported by Telegram Bot API.
-# ============================================================
 
 PREMIUM_EMOJIS = {
     "play": "5258362837411045098",
@@ -62,7 +54,6 @@ PREMIUM_EMOJIS = {
 
     "force_play": "6170455814810112778",
 
-    # Fallback icon.
     "default": "5275969776668134187",
 }
 
@@ -93,7 +84,6 @@ def time_to_seconds(time_str: str) -> int:
         HH:MM:SS
         MM:SS
         SS
-
     into seconds.
     """
 
@@ -139,7 +129,6 @@ class Inline:
     def _get_emoji_id(self, key):
         """
         Safely return a custom emoji ID.
-
         Always returns str or None.
         """
 
@@ -452,10 +441,6 @@ class Inline:
         InlineKeyboardButton.
         """
 
-        # ----------------------------------------------------
-        # Explicit ID has highest priority.
-        # ----------------------------------------------------
-
         explicit_id = kwargs.get(
             "icon_custom_emoji_id"
         )
@@ -466,10 +451,6 @@ class Inline:
             )
 
         else:
-            # ------------------------------------------------
-            # Determine emoji key.
-            # ------------------------------------------------
-
             key = emoji_key
 
             if not key:
@@ -484,10 +465,6 @@ class Inline:
 
             if emoji_id:
                 kwargs["icon_custom_emoji_id"] = emoji_id
-
-        # ----------------------------------------------------
-        # Build actual Pyrogram button.
-        # ----------------------------------------------------
 
         return self._button(
             *args,
@@ -791,60 +768,65 @@ class Inline:
 
         if not remove:
 
-            keyboard.append(
+            # FIX:
+            # Use extend() here because we are adding
+            # TWO separate rows to the keyboard.
+            keyboard.extend(
                 [
-                    self.ikb(
-                        text="▷",
-                        callback_data=(
-                            f"controls resume "
-                            f"{chat_id}"
+                    [
+                        self.ikb(
+                            text="▷",
+                            callback_data=(
+                                f"controls resume "
+                                f"{chat_id}"
+                            ),
+                            style=style[1],
+                            emoji_key="play",
                         ),
-                        style=style[1],
-                        emoji_key="play",
-                    ),
 
-                    self.ikb(
-                        text="Iɪ",
-                        callback_data=(
-                            f"controls pause "
-                            f"{chat_id}"
+                        self.ikb(
+                            text="Iɪ",
+                            callback_data=(
+                                f"controls pause "
+                                f"{chat_id}"
+                            ),
+                            style=style[1],
+                            emoji_key="pause",
                         ),
-                        style=style[1],
-                        emoji_key="pause",
-                    ),
 
-                    self.ikb(
-                        text="⥁",
-                        callback_data=(
-                            f"controls replay "
-                            f"{chat_id}"
+                        self.ikb(
+                            text="⥁",
+                            callback_data=(
+                                f"controls replay "
+                                f"{chat_id}"
+                            ),
+                            style=style[1],
+                            emoji_key="replay",
                         ),
-                        style=style[1],
-                        emoji_key="replay",
-                    ),
-                ],
+                    ],
 
-                [
-                    self.ikb(
-                        text="‣‣I",
-                        callback_data=(
-                            f"controls skip "
-                            f"{chat_id}"
+                    [
+                        self.ikb(
+                            text="‣‣I",
+                            callback_data=(
+                                f"controls skip "
+                                f"{chat_id}"
+                            ),
+                            style=style[1],
+                            emoji_key="skip",
                         ),
-                        style=style[1],
-                        emoji_key="skip",
-                    ),
 
-                    self.ikb(
-                        text="▢",
-                        callback_data=(
-                            f"controls stop "
-                            f"{chat_id}"
+                        self.ikb(
+                            text="▢",
+                            callback_data=(
+                                f"controls stop "
+                                f"{chat_id}"
+                            ),
+                            style=style[1],
+                            emoji_key="stop",
                         ),
-                        style=style[1],
-                        emoji_key="stop",
-                    ),
-                ],
+                    ],
+                ]
             )
 
             # ------------------------------------------------
