@@ -877,15 +877,15 @@ class Inline:
             button_names = {
                 "admins": "Aᴅᴍɪɴs",
                 "auth": "Aᴜᴛʜ",
-                "blist": "Bʟᴀᴄᴋʟɪsᴛ",
-                "lang": "Lᴀɴɢᴜᴀɢᴇ",
+                "blist": "B•Lɪsᴛ",
+                "lang": "Lᴀɴɢ",
                 "ping": "Pɪɴɢ",
                 "play": "Pʟᴀʏ",
                 "queue": "Qᴜᴇᴜᴇ",
                 "stats": "Sᴛᴀᴛs",
-                "sudo": "Sᴜᴅᴏᴇʀs",
-                "autoplay": "Aᴜᴛᴏᴘʟᴀʏ",
-                "vclogger": "Vᴄ ʟᴏɢɢᴇʀ",
+                "sudo": "Sᴜᴅᴏ",
+                "autoplay": "A•Pʟᴀʏ",
+                "vclogger": "Vᴄ Lᴏɢs",
             }
 
             emoji_map = {
