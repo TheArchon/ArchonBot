@@ -36,7 +36,7 @@ class Config:
         self.DEFAULT_THUMB = getenv("DEFAULT_THUMB", "https://n.uguu.se/EBVPCnuG.jpg")
         
         # --- PING VIDEO LINK ---
-        self.PING_IMG = getenv("PING_IMG", "https://graph.org/file/d6c4a388e881baa7737f4-e65e265dfc81acba0f.jpg")
+        self.PING_IMG = getenv("PING_IMG", "https://graph.org/file/286aa2427c36ca129f609-b2da780c99e73d27a7.mp4")
         
         # --- START VIDEO LINK ---
         self.START_IMG = getenv("START_IMG", "https://graph.org/file/09588fa43f7658e66986d-9c922299f1f947bc19.jpg")
