@@ -336,7 +336,7 @@ class Inline:
                 self.ikb(
                   text=_lang.get("close", "Cʟᴏsᴇ"),
                   callback_data="close",
-                  style=style[0],,
+                  style=style[0],
                ),
                self.ikb(
                  text="Bᴀᴄᴋ",
