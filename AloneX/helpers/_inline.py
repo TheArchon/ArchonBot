@@ -64,7 +64,7 @@ class Inline:
     def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
         return self.ikm([[self.ikb(text=text, callback_data=f"cancel_dl")]])
 
-    # 🆕 Autoplay Panel System
+    # 🆕 Aᴜᴛᴏᴘʟᴀʏ Panel System
     def autoplay_panel_markup(self, chat_id: int, enabled: bool) -> types.InlineKeyboardMarkup:
         status = "🟢 𝐄ɴᴀʙʟᴇᴅ" if enabled else "🔴 𝐃ɪsᴀʙʟᴇᴅ"
         
@@ -78,7 +78,7 @@ class Inline:
                         icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
                     ),
                     self.ikb(
-                        text="𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐃ɪsᴀʙʟᴇ",
+                        text="𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐃ɪSᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_DISABLE|{chat_id}",
                         style=ButtonStyle.DANGER,
                         icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
@@ -140,7 +140,7 @@ class Inline:
             keyboard.append(
                 [
                     self.ikb(text="▷", callback_data=f"controls resume {chat_id}", style=style[1]),
-                    self.ikb(text="II", callback_data=f"controls pause {chat_id}", style=style[1]),
+                    self.ikb(text="Iɪ", callback_data=f"controls pause {chat_id}", style=style[1]),
                     self.ikb(text="⥁", callback_data=f"controls replay {chat_id}", style=style[1]),
                     self.ikb(text="‣‣I", callback_data=f"controls skip {chat_id}", style=style[1]),
                     self.ikb(text="▢", callback_data=f"controls stop {chat_id}", style=style[1]),
@@ -149,8 +149,8 @@ class Inline:
             
             keyboard.append(
                 [
-                    self.ikb(text="Aᴜᴛᴏ Pʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
-                    self.ikb(text="Aᴅᴅ Mᴇ", url="https://t.me/ArchonBeatsBot?startgroup=true", style=style[0]),
+                    self.ikb(text="Aᴜᴛᴏ ᴘʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
+                    self.ikb(text="Aᴅᴅ ᴍᴇ", url="https://t.me/ArchonBeatsBot?startgroup=true", style=style[0]),
                 ]
             )
             
@@ -183,17 +183,17 @@ class Inline:
             ]
         else:
             button_names = {
-                "admins": "👮 Admins",
-                "auth": "🔐 Auth",
-                "blist": "🚫 Blacklist",
-                "lang": "🌐 Language",
-                "ping": "🏓 Ping",
-                "play": "🎵 Play",
-                "queue": "📋 Queue",
-                "stats": "📊 Stats",
-                "sudo": "👑 Sudoers",
-                "autoplay": "▶️ Autoplay",
-                "vclogger": "🎙 VC Logger"
+                "admins": "👮 Aᴅᴍɪɴs",
+                "auth": "🔐 Aᴜᴛʜ",
+                "blist": "🚫 Bʟᴀᴄᴋʟɪsᴛ",
+                "lang": "🌐 Lᴀɴɢᴜᴀɢᴇ",
+                "ping": "🏓 Pɪɴɢ",
+                "play": "🎵 Pʟᴀʏ",
+                "queue": "📋 Qᴜᴇᴜᴇ",
+                "stats": "📊 Sᴛᴀᴛs",
+                "sudo": "👑 Sᴜᴅᴏᴇʀs",
+                "autoplay": "▶️ Aᴜᴛᴏᴘʟᴀʏ",
+                "vclogger": "🎙 Vᴄ ʟᴏɢɢᴇʀ"
             }
             cbs = list(button_names.keys())
             rows = []
@@ -309,8 +309,8 @@ class Inline:
         if private:
             rows += [
                 [
-                    self.ikb(text="Source", callback_data="source_panel", style=style[2]),
-                    self.ikb(text="Support", callback_data="support_panel", style=style[2]),
+                    self.ikb(text="Sᴏᴜʀᴄᴇ", callback_data="source_panel", style=style[2]),
+                    self.ikb(text="Sᴜᴘᴘᴏʀᴛ", callback_data="support_panel", style=style[2]),
                 ],
                 [
                     self.ikb(text="𝚨 𝚨 ꧊᱂ 𝛖 𝛅 ⱶ꧊ ", url=config.OWNER_USERNAME, style=style[0]),
@@ -319,8 +319,8 @@ class Inline:
         else:
             rows += [
                 [
-                    self.ikb(text="Source", callback_data="source_panel", style=style[2]),
-                    self.ikb(text="Support", callback_data="support_panel", style=style[2]),
+                    self.ikb(text="Sᴏᴜʀᴄᴇ", callback_data="source_panel", style=style[2]),
+                    self.ikb(text="Sᴜᴘᴘᴏʀᴛ", callback_data="support_panel", style=style[2]),
                 ],
                 [self.ikb(text=lang["language"], callback_data="language", style=style[0])],
             ]
@@ -354,10 +354,10 @@ class Inline:
         style = self.get_row_styles()
         return self.ikm([
             [
-                self.ikb(text="🛠 Support", url=config.SUPPORT_CHAT, style=style[0]),
-                self.ikb(text="📢 Updates", url=config.SUPPORT_CHANNEL, style=style[0])
+                self.ikb(text="🛠 Sᴜᴘᴘᴏʀᴛ", url=config.SUPPORT_CHAT, style=style[0]),
+                self.ikb(text="📢 Uᴘᴅᴀᴛᴇs", url=config.SUPPORT_CHANNEL, style=style[0])
             ],
-            [self.ikb(text="🔙 Back", callback_data="help home", style=style[1])]
+            [self.ikb(text="🔙 Bᴀᴄᴋ", callback_data="help home", style=style[1])]
         ])
 
     def yt_key(self, link: str) -> types.InlineKeyboardMarkup:
@@ -366,7 +366,7 @@ class Inline:
             [
                 [
                     self.ikb(text="❐", copy_text=link, style=style[0]),
-                    self.ikb(text="Youtube", url=link, style=style[0]),
+                    self.ikb(text="Yᴏᴜᴛᴜʙᴇ", url=link, style=style[0]),
                 ],
             ]
         )
