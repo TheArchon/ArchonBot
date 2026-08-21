@@ -1,10 +1,9 @@
 # Copyright (c) 2025 TheHamkerAlone
 # Licensed under the MIT License.
-# This file is part of AloneX
+# This file is part of AloneXMusic
 
 import asyncio
 
-from pyrogram import enums
 from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
@@ -17,35 +16,24 @@ from AloneX import app, logger
 # SETTINGS
 # ============================================================
 
-# 0 = notification delete nahi hogi
-DELETE_DELAY = 0
+# VC notifications are PERMANENT.
+# No automatic deletion is performed.
+DELETE_DELAY = None
 
 
-# ============================================================
-# PREMIUM CUSTOM EMOJI
-# ============================================================
-
-# Tumhare inline.py me owner emoji wala ID.
-# Agar VC button ke liye alag emoji chahiye,
-# sirf ye ID replace kar dena.
+# Premium Custom Emoji ID
 PROFILE_EMOJI_ID = 5217822164362739968
 
-
-# ============================================================
-# VC LOGGER
-# ============================================================
 
 class VCLogger:
 
     def __init__(self):
 
         self.join_count: dict[tuple, int] = {}
-
         self.user_cache: dict[int, tuple] = {}
 
         # (chat_id, user_id) -> True / False
         self.mute_state: dict[tuple, bool] = {}
-
 
     # ========================================================
     # USER INFO
@@ -80,7 +68,6 @@ class VCLogger:
                 )
 
                 if user.last_name:
-
                     name += (
                         f" {user.last_name}"
                     )
@@ -88,29 +75,7 @@ class VCLogger:
                 username = user.username
 
         except Exception:
-
-            # Fallback: directly get user
-            try:
-
-                user = await app.get_users(
-                    user_id
-                )
-
-                name = (
-                    user.first_name
-                    or "User"
-                )
-
-                if user.last_name:
-
-                    name += (
-                        f" {user.last_name}"
-                    )
-
-                username = user.username
-
-            except Exception:
-                pass
+            pass
 
         self.user_cache[user_id] = (
             name,
@@ -118,27 +83,6 @@ class VCLogger:
         )
 
         return name, username
-
-
-    # ========================================================
-    # HTML ESCAPE
-    # ========================================================
-
-    @staticmethod
-    def _escape_html(
-        text: str,
-    ) -> str:
-
-        if not text:
-            return "User"
-
-        return (
-            str(text)
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-        )
-
 
     # ========================================================
     # PROFILE BUTTON
@@ -150,54 +94,31 @@ class VCLogger:
         name: str,
     ) -> InlineKeyboardMarkup:
 
-        safe_name = self._escape_html(
-            name
-        )
+        try:
 
-        button = InlineKeyboardButton(
-            text=safe_name,
-            url=f"tg://user?id={user_id}",
-            icon_custom_emoji_id=str(
-                PROFILE_EMOJI_ID
-            ),
-        )
+            button = InlineKeyboardButton(
+                text=name,
+                url=f"tg://user?id={user_id}",
+                icon_custom_emoji_id=str(
+                    PROFILE_EMOJI_ID
+                ),
+            )
+
+        except TypeError:
+
+            # Fallback for Pyrogram versions
+            # which don't support custom emoji
+            # button icons.
+            button = InlineKeyboardButton(
+                text=name,
+                url=f"tg://user?id={user_id}",
+            )
 
         return InlineKeyboardMarkup(
             [
                 [button]
             ]
         )
-
-
-    # ========================================================
-    # DELETE MESSAGE
-    # ========================================================
-
-    async def _delete_later(
-        self,
-        chat_id: int,
-        message_id: int,
-    ) -> None:
-
-        # DELETE_DELAY = 0 hone par
-        # message permanently rahega.
-        if DELETE_DELAY <= 0:
-            return
-
-        try:
-
-            await asyncio.sleep(
-                DELETE_DELAY
-            )
-
-            await app.delete_messages(
-                chat_id,
-                message_id,
-            )
-
-        except Exception:
-            pass
-
 
     # ========================================================
     # SEND MESSAGE
@@ -218,31 +139,24 @@ class VCLogger:
                 name,
             )
 
-            msg = await app.send_message(
+            await app.send_message(
                 chat_id=chat_id,
                 text=text,
                 reply_markup=keyboard,
-                parse_mode=enums.ParseMode.HTML,
-                disable_web_page_preview=True,
+                parse_mode="html",
             )
 
-            # Sirf agar DELETE_DELAY > 0 ho
-            if DELETE_DELAY > 0:
-
-                asyncio.create_task(
-                    self._delete_later(
-                        chat_id,
-                        msg.id,
-                    )
-                )
+            # IMPORTANT:
+            # VC notification is intentionally
+            # NOT deleted.
 
         except Exception as e:
 
             logger.error(
                 "[VCLogger] Failed to send "
-                f"VC notification in {chat_id}: {e}"
+                f"VC notification for "
+                f"{chat_id}: {e}"
             )
-
 
     # ========================================================
     # JOIN
@@ -272,15 +186,11 @@ class VCLogger:
 
         count = self.join_count[key]
 
-        name, username = (
+        name, _ = (
             await self._get_user_info(
                 chat_id,
                 user_id,
             )
-        )
-
-        safe_name = self._escape_html(
-            name
         )
 
         text = (
@@ -289,7 +199,7 @@ class VCLogger:
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{safe_name}</b>\n\n"
+            f"<b>{name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -313,7 +223,6 @@ class VCLogger:
             name,
         )
 
-
     # ========================================================
     # LEAVE
     # ========================================================
@@ -327,15 +236,11 @@ class VCLogger:
         if not user_id:
             return
 
-        name, username = (
+        name, _ = (
             await self._get_user_info(
                 chat_id,
                 user_id,
             )
-        )
-
-        safe_name = self._escape_html(
-            name
         )
 
         text = (
@@ -344,7 +249,7 @@ class VCLogger:
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{safe_name}</b>\n\n"
+            f"<b>{name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -360,16 +265,10 @@ class VCLogger:
             name,
         )
 
-        # User leave kar gaya,
-        # isliye mute state reset.
         self.mute_state.pop(
-            (
-                chat_id,
-                user_id,
-            ),
+            (chat_id, user_id),
             None,
         )
-
 
     # ========================================================
     # MUTE
@@ -389,24 +288,16 @@ class VCLogger:
             user_id,
         )
 
-        # Duplicate notification prevent
-        if self.mute_state.get(
-            key
-        ) is True:
-
+        if self.mute_state.get(key) is True:
             return
 
         self.mute_state[key] = True
 
-        name, username = (
+        name, _ = (
             await self._get_user_info(
                 chat_id,
                 user_id,
             )
-        )
-
-        safe_name = self._escape_html(
-            name
         )
 
         text = (
@@ -415,7 +306,7 @@ class VCLogger:
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{safe_name}</b>\n\n"
+            f"<b>{name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -430,7 +321,6 @@ class VCLogger:
             text,
             name,
         )
-
 
     # ========================================================
     # UNMUTE
@@ -450,25 +340,16 @@ class VCLogger:
             user_id,
         )
 
-        # Agar pehle muted nahi tha
-        # to duplicate notification nahi.
-        if self.mute_state.get(
-            key
-        ) is not True:
-
+        if self.mute_state.get(key) is not True:
             return
 
         self.mute_state[key] = False
 
-        name, username = (
+        name, _ = (
             await self._get_user_info(
                 chat_id,
                 user_id,
             )
-        )
-
-        safe_name = self._escape_html(
-            name
         )
 
         text = (
@@ -477,7 +358,7 @@ class VCLogger:
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{safe_name}</b>\n\n"
+            f"<b>{name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -493,9 +374,8 @@ class VCLogger:
             name,
         )
 
-
     # ========================================================
-    # CLEAR CHAT
+    # CLEAN CHAT CACHE
     # ========================================================
 
     def clear_chat(
@@ -508,7 +388,6 @@ class VCLogger:
         ):
 
             if key[0] == chat_id:
-
                 del self.join_count[key]
 
         for key in list(
@@ -516,12 +395,7 @@ class VCLogger:
         ):
 
             if key[0] == chat_id:
-
                 del self.mute_state[key]
 
-
-# ============================================================
-# GLOBAL INSTANCE
-# ============================================================
 
 vclogger = VCLogger()
