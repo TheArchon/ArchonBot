@@ -21,9 +21,9 @@ class Config:
         self.SESSION2 = getenv("SESSION2", None)
         self.SESSION3 = getenv("SESSION3", None)
 
-        self.SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArushUpdates")
-        self.SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/+_lxHlK6Z6fdjNTQ1")
-        self.OWNER_USERNAME = getenv("OWNER_USERNAME", "https://t.me/Innocentpapaboltee")
+        self.SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
+        self.SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
+        self.OWNER_USERNAME = getenv("OWNER_USERNAME", "https://t.me/ArchonOfficial")
 
         self.AUTO_END: bool = getenv("AUTO_END", False)
         self.AUTO_LEAVE: bool = getenv("AUTO_LEAVE", False)
@@ -36,11 +36,11 @@ class Config:
         self.DEFAULT_THUMB = getenv("DEFAULT_THUMB", "https://n.uguu.se/EBVPCnuG.jpg")
         
         # --- PING VIDEO LINK ---
-        self.PING_IMG = getenv("PING_IMG", "https://radare.arzfun.com/api/tg/file?id=BAACAgUAAxkBAAEMsPNqV_Zr0LC9pwmtzWakOIchnXuIdQACiyAAAj56wVbxBM2QDTx3Fz0E&name=ENBUTHB6dnrNmQdH3dLRWe.mp4&header=video/mp4")
+        self.PING_IMG = getenv("PING_IMG", "https://graph.org/file/d6c4a388e881baa7737f4-e65e265dfc81acba0f.jpg")
         
         # --- START VIDEO LINK ---
-        self.START_IMG = getenv("START_IMG", "https://files.catbox.moe/etdhlr.jpg")
-        self.START_VIDEO = getenv("START_VIDEO", "https://files.catbox.moe/0v9z4o.mp4")
+        self.START_IMG = getenv("START_IMG", "https://graph.org/file/09588fa43f7658e66986d-9c922299f1f947bc19.jpg")
+        self.START_VIDEO = getenv("START_VIDEO", "https://graph.org/file/3a79f5b7dfb1e423b49d3-eacd9bc472c36d5be6.mp4")
 
     def check(self):
         missing = [
