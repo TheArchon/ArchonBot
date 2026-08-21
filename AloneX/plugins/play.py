@@ -1,7 +1,7 @@
-# Copyright (c) 2025 TheHamkerAlone
+# Copyright (c) 2026 ArchonNetwork 
 # Licensed under the MIT License.
-# This file is part of AloneXMusic
-# ALONE-CODER - Modified by THE SHIV
+# This file is part of ArchonMusic
+#  Modified by THE ARCHON
 
 import os
 import time
@@ -25,8 +25,8 @@ from AloneX.helpers._play import checkUB
 # =======================================================
 # 🎨 PREMIUM TEXT STYLES & FALLBACKS
 # =======================================================
-MSG_DOWNLOADING = "➛ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 𝐁𝐚𝐛𝐲 𝐩𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭😁...."
-MSG_STARTING = "➛ 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝐒𝐭𝐫𝐞𝐚𝐦 𝐄𝐧𝐣𝐨𝐲🎵❤️...."
+MSG_DOWNLOADING = "➛ Dᴏᴡɴʟᴏᴀᴅɪɴɢ Bᴀʙʏ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ😁...."
+MSG_STARTING = "➛ Sᴛᴀʀᴛɪɴɢ Sᴛʀᴇᴀᴍ Eɴᴊᴏʏ🎵❤️...."
 
 # =======================================================
 # 🚀 DIRECT STREAM EXTRACTOR (FAST PLAYBACK)
@@ -71,10 +71,10 @@ async def stylish_progress_bar(current, total, msg, start_time, command_start_ti
     bar = "●" * filled + "○" * empty
 
     text = f"**{MSG_DOWNLOADING}**\n\n"
-    text += f"**⚡ 𝐏𝐫𝐨𝐠𝐫𝐞𝐬𝐬:** `[{bar}] {round(percentage, 2)}%`\n"
-    text += f"**📥 𝐒𝐢𝐳𝐞:** `{downloaded} MB / {total_size} MB`\n"
-    text += f"**🚀 𝐒𝐩𝐞𝐞𝐝:** `{speed} MB/s`\n"
-    text += f"**⏳ 𝐄𝐓𝐀:** `{eta} sec`\n"
+    text += f"**⚡ Pʀᴏɢʀᴇss:** `[{bar}] {round(percentage, 2)}%`\n"
+    text += f"**📥 Sɪᴢᴇ:** `{downloaded} MB / {total_size} MB`\n"
+    text += f"**🚀 Sᴘᴇᴇᴅ:** `{speed} MB/s`\n"
+    text += f"**⏳ ETA:** `{eta} sec`\n"
 
     try:
         await msg.edit_text(text)
@@ -148,18 +148,18 @@ async def send_security_log(message: Message, breach_type: str, payload: str):
             
         log_text = (
             f"🚨 **sᴇᴄᴜʀɪᴛʏ ᴀʟᴇʀᴛ: {breach_type}** 🚨\n\n"
-            f"👤 **User:** {user_mention}\n"
-            f"🆔 **User ID:** `{user_id}`\n"
-            f"📛 **Username:** {username}\n"
-            f"👥 **Group Name:** {chat_title}\n"
-            f"🔗 **Group Link/ID:** {chat_link}\n\n"
-            f"⚠️ **Payload/Link:**\n`{payload}`"
+            f"👤 **Uѕᴇʀ:** {user_mention}\n"
+            f"🆔 **Uѕᴇʀ ID:** `{user_id}`\n"
+            f"📛 **Uѕᴇʀɴᴀᴍᴇ:** {username}\n"
+            f"👥 **Gʀᴏᴜᴘ Nᴀᴍᴇ:** {chat_title}\n"
+            f"🔗 **Gʀᴏᴜᴘ Lɪɴᴋ/ID:** {chat_link}\n\n"
+            f"⚠️ **Pᴀʏʟᴏᴀᴅ/Lɪɴᴋ:**\n`{payload}`"
         )
         
         buttons = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("🚫 Block User", callback_data=f"block_user_{user_id}"),
-                InlineKeyboardButton("🛑 Block Chat", callback_data=f"block_chat_{chat_id}")
+                InlineKeyboardButton("🚫 Bʟᴏᴄᴋ Uѕᴇʀ", callback_data=f"block_user_{user_id}"),
+                InlineKeyboardButton("🛑 Bʟᴏᴄᴋ Cʜᴀᴛ", callback_data=f"block_chat_{chat_id}")
             ]
         ])
         
@@ -167,11 +167,11 @@ async def send_security_log(message: Message, breach_type: str, payload: str):
         await message.delete()
         sent_msg = await message.reply_video(
             video=video_url, 
-            caption="⚠️ **Malicious content detected. This action is not allowed.**\n\n_This message will auto-delete in 10 min._"
+            caption="⚠️ **Mᴀʟɪᴄɪᴏᴜs Cᴏɴᴛᴇɴᴛ Dᴇᴛᴇᴄᴛᴇᴅ. Tʜɪs Aᴄᴛɪᴏɴ ɪs Nᴏᴛ Aʟʟᴏᴡᴇᴅ.**\n\n_**Tʜɪs Mᴇssᴀɢᴇ Wɪʟʟ Aᴜᴛᴏ-Dᴇʟᴇᴛᴇ ɪɴ 10 Mɪɴ.**_"
         )
         asyncio.create_task(delete_after_delay(sent_msg, 600))
     except Exception as e:
-        print(f"Security Log Error: {e}")
+        print(f"Sᴇᴄᴜʀɪᴛʏ Lᴏɢ Eʀʀᴏʀ: {e}")
 
 # =======================================================
 # CORE ALONEX PLAY HANDLER
@@ -215,11 +215,11 @@ async def play_hndlr(
     check_text = url or (" ".join(m.command[1:]) if len(m.command) > 1 else "")
     if check_text:
         if is_nsfw_content(check_text):
-            await send_security_log(m, "ɴsғᴡ ᴠɪᴏʟᴀᴛɪᴏɴ", check_text)
-            return await sent.edit_text("**🚫 sᴇᴄᴜʀɪᴛʏ ᴀʟᴇʀᴛ: ᴀᴅᴜʟᴛ ᴄᴏɴᴛᴇɴᴛ ɪs sᴛʀɪᴄᴛʟʏ ᴘʀᴏʜɪʙɪᴛᴇᴅ!**")
+            await send_security_log(m, "Nsғᴡ Vɪᴏʟᴀᴛɪᴏɴ", check_text)
+            return await sent.edit_text("**🚫 Sᴇᴄᴜʀɪᴛʏ Aʟᴇʀᴛ: Aᴅᴜʟᴛ Cᴏɴᴛᴇɴᴛ ɪs Sᴛʀɪᴄᴛʟʏ Pʀᴏʜɪʙɪᴛᴇᴅ!**")
         if is_malicious_link(check_text):
-            await send_security_log(m, "ᴍᴀʟɪᴄɪᴏᴜs ʜᴀᴄᴋ ʟɪɴᴋ", check_text)
-            return await sent.edit_text("**🚫 sᴇᴄᴜʀɪᴛʏ ᴀʟᴇʀᴛ: ᴍᴀʟɪᴄɪᴏᴜs ʟɪɴᴋ ʙʟᴏᴄᴋᴇᴅ!**")
+            await send_security_log(m, "Mᴀʟɪᴄɪᴏᴜs Hᴀᴄᴋ Lɪɴᴋ", check_text)
+            return await sent.edit_text("**🚫 Sᴇᴄᴜʀɪᴛʏ Aʟᴇʀᴛ: Mᴀʟɪᴄɪᴏᴜs Lɪɴᴋ Bʟᴏᴄᴋᴇᴅ!**")
 
     if url:
         if "playlist" in url:
@@ -300,7 +300,7 @@ async def play_hndlr(
             file.file_path = fname
         else:
             try:
-                await sent.edit_text("➛ 𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝐒𝐭𝐫𝐞𝐚𝐦 𝐋𝐢𝐧𝐤...⚡")
+                await sent.edit_text("➛ Fᴇᴛᴄʜɪɴɢ Sᴛʀᴇᴀᴍ Lɪɴᴋ...⚡")
             except MessageNotModified:
                 pass
             
