@@ -94,7 +94,7 @@ class Inline:
                 ],
                 [
                     self.ikb(
-                        text="⌯ 𝐂ʟσsє ⌯",
+                        text="Cʟᴏsᴇ",
                         callback_data="close",
                         style=ButtonStyle.DANGER
                     )
@@ -149,8 +149,8 @@ class Inline:
             
             keyboard.append(
                 [
-                    self.ikb(text="▶️ 𝐀ᴜᴛᴏ-𝐏ʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
-                    self.ikb(text="Aᴅᴅ Mᴇ", url="https://t.me/{app.username}?startgroup=true", style=style[0]),
+                    self.ikb(text="Aᴜᴛᴏ Pʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
+                    self.ikb(text="Aᴅᴅ Mᴇ", url="https://t.me/ArchonBeatsBot?startgroup=true", style=style[0]),
                 ]
             )
             
@@ -160,7 +160,7 @@ class Inline:
             keyboard.append(
                 [
                     self.ikb(
-                        text=_lang.get("close", "⌯ 𝐂ʟσsє ⌯"),
+                        text=_lang.get("close", "Cʟᴏsᴇ"),
                         callback_data="close",
                         style=style[0],
                     ),
@@ -176,9 +176,9 @@ class Inline:
         if back:
             rows = [
                 [
-                    self.ikb(text=_lang.get("back", "🔙 Back"), callback_data="help back", style=style[0]),
-                    self.ikb(text=_lang.get("home_btn", "🏠 Home"), callback_data="help home", style=style[0]),
-                    self.ikb(text=_lang.get("close", "🗑 Close"), callback_data="close", style=style[0]),
+                    self.ikb(text=_lang.get("back", "Bᴀᴄᴋ"), callback_data="help back", style=style[0]),
+                    self.ikb(text=_lang.get("home_btn", "Hᴏᴍᴇ"), callback_data="help home", style=style[0]),
+                    self.ikb(text=_lang.get("close", "Cʟᴏsᴇ"), callback_data="close", style=style[0]),
                 ]
             ]
         else:
@@ -209,8 +209,8 @@ class Inline:
             last_style = style[len(rows) % 3]
             rows.append(
                 [
-                    self.ikb(text=_lang.get("home_btn", "🏠 Home"), callback_data="help home", style=last_style),
-                    self.ikb(text=_lang.get("close", "🗑 Close"), callback_data="close", style=last_style),
+                    self.ikb(text=_lang.get("home_btn", "Hᴏᴍᴇ"), callback_data="help home", style=last_style),
+                    self.ikb(text=_lang.get("close", "Cʟᴏsᴇ"), callback_data="close", style=last_style),
                 ]
             )
 
@@ -330,10 +330,21 @@ class Inline:
     # 🛠️ NEW: SOURCE PANEL MARKUP
     def source_markup(self) -> types.InlineKeyboardMarkup:
         style = self.get_row_styles()
+        
         return self.ikm([
-            [self.ikb(text="𝚨 𝚨 ꧊᱂ 𝛖 𝛅 ⱶ꧊", url="https://t.me/innocentpapaboltee", style=style[0])],
-            [self.ikb(text="🔙 Back", callback_data="help home", style=style[1])]
-        ])
+            [
+                self.ikb(
+                  text=_lang.get("close", "Cʟᴏsᴇ"),
+                  callback_data="close",
+                  style=style[0],,
+               ),
+               self.ikb(
+                 text="Bᴀᴄᴋ",
+                 callback_data="help home",
+                 style=style[1],
+             ),
+         ],
+     ])
 
     # 🛠️ NEW: SUPPORT PANEL MARKUP
     def support_markup(self) -> types.InlineKeyboardMarkup:
