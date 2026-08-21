@@ -1,4 +1,3 @@
-
 import random
 import re
 
@@ -10,12 +9,10 @@ from AloneX.core.lang import lang_codes
 
 
 # ============================================================
-# PREMIUM / CUSTOM EMOJI IDs
+# PREMIUM / CUSTOM EMOJI CONFIG
 # ============================================================
-# IMPORTANT:
-# Keep these as STRINGS.
-# Replace any ID here with your own valid Telegram custom emoji ID.
-# Empty string = no icon.
+# Keep your valid Telegram custom emoji IDs here.
+# These IDs are used by the inline button builder.
 # ============================================================
 
 PREMIUM_EMOJIS = {
@@ -24,21 +21,17 @@ PREMIUM_EMOJIS = {
     "replay": "5408943604829794451",
     "skip": "5409368076447657845",
     "stop": "6100397162976252509",
-
     "autoplay": "5373310679241466020",
     "autoplay_disable": "5408916593780470262",
     "autoplay_status": "5776182936638329359",
-
     "add": "5258389041006518073",
     "close": "5936143551854285132",
     "back": "5891211339170326418",
     "home": "5267421370114914946",
     "help": "6271611232457855630",
-
     "source": "6271674836628541366",
     "support": "6257780484281997093",
     "owner": "5778455936410588193",
-
     "language": "5409320020058584473",
     "queue": "5408843502027033965",
     "stats": "5258337316715373336",
@@ -48,14 +41,12 @@ PREMIUM_EMOJIS = {
     "sudo": "6100514338274020922",
     "vclogger": "6030657343744644592",
     "ping": "5318840353510408444",
-
     "confirm": "5463122435425448565",
     "cancel": "6041720006973067267",
     "copy": "5355051922862653659",
     "youtube": "6172312314423808834",
     "updates": "6271537028307881531",
     "force_play": "6170455814810112778",
-
     "default": "5275969776668134187",
 }
 
@@ -64,20 +55,19 @@ PREMIUM_EMOJIS = {
 # OPTIONAL CONFIG OVERRIDE
 # ============================================================
 
-try:
-    _config_emojis = getattr(config, "PREMIUM_EMOJIS", None)
+_config_emojis = getattr(config, "PREMIUM_EMOJIS", None)
 
-    if isinstance(_config_emojis, dict):
-        for key, value in _config_emojis.items():
-            if value is not None:
-                PREMIUM_EMOJIS[key] = str(value)
+if isinstance(_config_emojis, dict):
+    PREMIUM_EMOJIS.update(_config_emojis)
 
-except Exception:
-    pass
 
+# ============================================================
+# TIME HELPER
+# ============================================================
 
 def time_to_seconds(time_str: str) -> int:
-    """Convert HH:MM:SS / MM:SS / SS to seconds."""
+    """Convert HH:MM:SS / MM:SS / SS into seconds."""
+
     try:
         parts = str(time_str).split(":")
 
@@ -95,10 +85,14 @@ def time_to_seconds(time_str: str) -> int:
             return int(parts[0])
 
     except (ValueError, TypeError):
-        pass
+        return 0
 
     return 0
 
+
+# ============================================================
+# INLINE KEYBOARD
+# ============================================================
 
 class Inline:
 
@@ -107,62 +101,262 @@ class Inline:
         self._button = types.InlineKeyboardButton
 
     # ========================================================
-    # PREMIUM EMOJI HELPER
+    # AUTOMATIC EMOJI DETECTION
     # ========================================================
 
-    def emoji(self, key: str):
-        """
-        Return a premium custom emoji ID.
+    def _emoji_key(
+        self,
+        text=None,
+        callback_data=None,
+        url=None,
+        copy_text=None,
+    ):
+        value = " ".join(
+            str(x).lower()
+            for x in (text, callback_data, url, copy_text)
+            if x is not None
+        )
 
-        Always returns a string or None.
-        """
-        value = PREMIUM_EMOJIS.get(key)
+        rules = (
+            (
+                "autoplay_disable",
+                (
+                    "autoplay_enable",
+                    "autoplay_disable",
+                    "auto play disable",
+                ),
+            ),
+            (
+                "autoplay_status",
+                (
+                    "autoplay_status",
+                    "auto play :",
+                    "enabled",
+                    "disabled",
+                ),
+            ),
+            (
+                "autoplay",
+                (
+                    "autoplay",
+                    "aᴜᴛᴏ pʟᴀʏ",
+                ),
+            ),
+            (
+                "pause",
+                (
+                    "controls pause",
+                    "iɪ",
+                ),
+            ),
+            (
+                "replay",
+                (
+                    "controls replay",
+                    "⥁",
+                ),
+            ),
+            (
+                "skip",
+                (
+                    "controls skip",
+                    "‣‣i",
+                    "‣‣I",
+                ),
+            ),
+            (
+                "stop",
+                (
+                    "controls stop",
+                    "▢",
+                ),
+            ),
+            (
+                "play",
+                (
+                    "controls resume",
+                    "▷",
+                ),
+            ),
+            (
+                "force_play",
+                (
+                    "controls force",
+                ),
+            ),
+            (
+                "close",
+                (
+                    "close",
+                    "cʟᴏsᴇ",
+                ),
+            ),
+            (
+                "back",
+                (
+                    "help back",
+                    "bᴀᴄᴋ",
+                ),
+            ),
+            (
+                "home",
+                (
+                    "help home",
+                    "hᴏᴍᴇ",
+                ),
+            ),
+            (
+                "help",
+                (
+                    "help",
+                ),
+            ),
+            (
+                "source",
+                (
+                    "source",
+                    "sᴏᴜʀᴄᴇ",
+                ),
+            ),
+            (
+                "support",
+                (
+                    "support",
+                    "sᴜᴘᴘᴏʀᴛ",
+                ),
+            ),
+            (
+                "language",
+                (
+                    "language",
+                    "lᴀɴɢᴜᴀɢᴇ",
+                ),
+            ),
+            (
+                "queue",
+                (
+                    "queue",
+                    "qᴜᴇᴜᴇ",
+                ),
+            ),
+            (
+                "stats",
+                (
+                    "stats",
+                    "sᴛᴀᴛs",
+                ),
+            ),
+            (
+                "admins",
+                (
+                    "admins",
+                    "aᴅᴍɪɴs",
+                ),
+            ),
+            (
+                "auth",
+                (
+                    "auth",
+                    "aᴜᴛʜ",
+                ),
+            ),
+            (
+                "blacklist",
+                (
+                    "blist",
+                    "blacklist",
+                ),
+            ),
+            (
+                "sudo",
+                (
+                    "sudo",
+                    "sᴜᴅᴏ",
+                ),
+            ),
+            (
+                "vclogger",
+                (
+                    "vclogger",
+                    "vᴄ ʟᴏɢɢᴇʀ",
+                ),
+            ),
+            (
+                "ping",
+                (
+                    "ping",
+                    "pɪɴɢ",
+                ),
+            ),
+            (
+                "add",
+                (
+                    "startgroup=true",
+                    "aᴅᴅ mᴇ",
+                ),
+            ),
+            (
+                "owner",
+                (
+                    "tʜᴇ aʀᴄʜᴏɴ",
+                ),
+            ),
+            (
+                "youtube",
+                (
+                    "youtube",
+                ),
+            ),
+            (
+                "copy",
+                (
+                    "copy_text",
+                    "❐",
+                ),
+            ),
+            (
+                "updates",
+                (
+                    "updates",
+                ),
+            ),
+        )
 
-        if value is None:
-            return None
+        for key, needles in rules:
+            if any(needle in value for needle in needles):
+                return key
 
-        value = str(value).strip()
-
-        if not value:
-            return None
-
-        return value
+        return "default"
 
     # ========================================================
-    # INLINE BUTTON CREATOR
+    # PREMIUM EMOJI BUTTON BUILDER
     # ========================================================
 
     def pkb(self, *args, emoji_key=None, **kwargs):
         """
-        Central InlineKeyboardButton creator.
+        Create InlineKeyboardButton with custom Telegram emoji.
 
-        Priority:
-        1. Explicit icon_custom_emoji_id
-        2. emoji_key
-        3. No icon
+        Explicit icon_custom_emoji_id always has priority.
+        If no explicit ID is supplied, emoji_key is used.
         """
 
-        # ----------------------------------------------------
-        # Explicit ID has highest priority.
-        # ----------------------------------------------------
         explicit_id = kwargs.get("icon_custom_emoji_id")
 
-        if explicit_id is not None:
-            explicit_id = str(explicit_id).strip()
+        if not explicit_id:
+            key = emoji_key or self._emoji_key(
+                kwargs.get("text"),
+                kwargs.get("callback_data"),
+                kwargs.get("url"),
+                kwargs.get("copy_text"),
+            )
 
-            if explicit_id:
-                kwargs["icon_custom_emoji_id"] = explicit_id
-            else:
-                kwargs.pop("icon_custom_emoji_id", None)
-
-        # ----------------------------------------------------
-        # If no explicit ID was supplied, use emoji_key.
-        # ----------------------------------------------------
-        elif emoji_key:
-            emoji_id = self.emoji(emoji_key)
+            emoji_id = (
+                PREMIUM_EMOJIS.get(key)
+                or PREMIUM_EMOJIS.get("default")
+            )
 
             if emoji_id:
-                kwargs["icon_custom_emoji_id"] = emoji_id
+                kwargs["icon_custom_emoji_id"] = str(emoji_id)
 
         return self._button(*args, **kwargs)
 
@@ -171,7 +365,7 @@ class Inline:
         return self.pkb
 
     # ========================================================
-    # RANDOM BUTTON STYLES
+    # RANDOM ROW STYLE
     # ========================================================
 
     def get_row_styles(self):
@@ -188,7 +382,11 @@ class Inline:
     # PROGRESS BAR
     # ========================================================
 
-    def get_progress_bar(self, played_str: str, dur_str: str) -> str:
+    def get_progress_bar(
+        self,
+        played_str: str,
+        dur_str: str,
+    ) -> str:
 
         played_sec = time_to_seconds(str(played_str))
 
@@ -217,17 +415,28 @@ class Inline:
         )
 
         if filled_blocks == 0:
-            bar = "🎵" + "▱" * (total_blocks - 1)
+
+            bar = (
+                "🎵"
+                + "▱" * (total_blocks - 1)
+            )
 
         elif filled_blocks == total_blocks:
-            bar = "▰" * (total_blocks - 1) + "🎵"
+
+            bar = (
+                "▰" * (total_blocks - 1)
+                + "🎵"
+            )
 
         else:
+
             bar = (
                 "▰" * filled_blocks
                 + "🎵"
                 + "▱" * (
-                    total_blocks - filled_blocks - 1
+                    total_blocks
+                    - filled_blocks
+                    - 1
                 )
             )
 
@@ -237,7 +446,8 @@ class Inline:
     # CANCEL DOWNLOAD
     # ========================================================
 
-    def cancel_dl(self, text):
+    def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
+
         return self.ikm(
             [
                 [
@@ -258,7 +468,7 @@ class Inline:
         self,
         chat_id: int,
         enabled: bool,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
         status = (
             "Eɴᴀʙʟᴇᴅ"
@@ -316,10 +526,14 @@ class Inline:
         timer: str = None,
         remove: bool = False,
         _lang: dict = None,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
         keyboard = []
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
+
+        # ----------------------------------------------------
+        # STATUS BUTTON
+        # ----------------------------------------------------
 
         if status:
 
@@ -330,14 +544,19 @@ class Inline:
                         callback_data=(
                             f"controls status {chat_id}"
                         ),
-                        style=styles[0],
+                        style=style[0],
                     )
                 ]
             )
 
+        # ----------------------------------------------------
+        # TIMER / PROGRESS
+        # ----------------------------------------------------
+
         elif timer:
 
             try:
+
                 times = re.findall(
                     r"\d+:\d+(?::\d+)?",
                     timer,
@@ -373,7 +592,8 @@ class Inline:
 
                     timer = (
                         f"{played_str} "
-                        f"{new_bar} Live"
+                        f"{new_bar} "
+                        f"Live"
                     )
 
             except Exception:
@@ -386,16 +606,24 @@ class Inline:
                         callback_data=(
                             f"controls status {chat_id}"
                         ),
-                        style=styles[0],
+                        style=style[0],
                     )
                 ]
             )
 
-        if not remove:
+        # ----------------------------------------------------
+        # PLAYER BUTTONS
+        #
+        # IMPORTANT:
+        # Previously all 5 buttons were in one row.
+        # With premium emojis this could become too wide.
+        #
+        # Now:
+        # [ PLAY ][ PAUSE ][ REPLAY ]
+        # [ SKIP ][ STOP ]
+        # ----------------------------------------------------
 
-            # ------------------------------------------------
-            # PLAYBACK CONTROLS
-            # ------------------------------------------------
+        if not remove:
 
             keyboard.append(
                 [
@@ -404,7 +632,7 @@ class Inline:
                         callback_data=(
                             f"controls resume {chat_id}"
                         ),
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="play",
                     ),
                     self.ikb(
@@ -412,7 +640,7 @@ class Inline:
                         callback_data=(
                             f"controls pause {chat_id}"
                         ),
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="pause",
                     ),
                     self.ikb(
@@ -420,15 +648,17 @@ class Inline:
                         callback_data=(
                             f"controls replay {chat_id}"
                         ),
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="replay",
                     ),
+                ],
+                [
                     self.ikb(
                         text="‣‣I",
                         callback_data=(
                             f"controls skip {chat_id}"
                         ),
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="skip",
                     ),
                     self.ikb(
@@ -436,14 +666,14 @@ class Inline:
                         callback_data=(
                             f"controls stop {chat_id}"
                         ),
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="stop",
                     ),
-                ]
+                ],
             )
 
             # ------------------------------------------------
-            # AUTOPLAY / ADD ME
+            # AUTO PLAY + ADD ME
             # ------------------------------------------------
 
             keyboard.append(
@@ -453,7 +683,7 @@ class Inline:
                         callback_data=(
                             f"AUTOPLAY_PANEL_OPEN|{chat_id}"
                         ),
-                        style=styles[2],
+                        style=style[2],
                         emoji_key="autoplay",
                     ),
                     self.ikb(
@@ -463,11 +693,15 @@ class Inline:
                             "ArchonBeatsBot"
                             "?startgroup=true"
                         ),
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="add",
                     ),
                 ]
             )
+
+            # ------------------------------------------------
+            # CLOSE
+            # ------------------------------------------------
 
             if not _lang:
                 _lang = lang.languages["en"]
@@ -480,7 +714,7 @@ class Inline:
                             "Cʟᴏsᴇ",
                         ),
                         callback_data="close",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="close",
                     )
                 ]
@@ -496,9 +730,9 @@ class Inline:
         self,
         _lang: dict,
         back: bool = False,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         if back:
 
@@ -510,7 +744,7 @@ class Inline:
                             "Bᴀᴄᴋ",
                         ),
                         callback_data="help back",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="back",
                     ),
                     self.ikb(
@@ -519,7 +753,7 @@ class Inline:
                             "Hᴏᴍᴇ",
                         ),
                         callback_data="help home",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="home",
                     ),
                     self.ikb(
@@ -528,7 +762,7 @@ class Inline:
                             "Cʟᴏsᴇ",
                         ),
                         callback_data="close",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="close",
                     ),
                 ]
@@ -550,7 +784,7 @@ class Inline:
                 "vclogger": "Vᴄ ʟᴏɢɢᴇʀ",
             }
 
-            emoji_keys = {
+            emoji_map = {
                 "admins": "admins",
                 "auth": "auth",
                 "blist": "blacklist",
@@ -564,41 +798,30 @@ class Inline:
                 "vclogger": "vclogger",
             }
 
-            callbacks = list(
-                button_names.keys()
-            )
-
+            cbs = list(button_names.keys())
             rows = []
 
-            for i in range(
-                0,
-                len(callbacks),
-                3,
-            ):
+            for i in range(0, len(cbs), 3):
 
-                row = callbacks[i:i + 3]
-
-                row_style = styles[
-                    (i // 3) % 3
-                ]
+                row_cbs = cbs[i:i + 3]
+                row_style = style[(i // 3) % 3]
 
                 rows.append(
                     [
                         self.ikb(
-                            text=button_names[item],
-                            callback_data=(
-                                f"help {item}"
-                            ),
+                            text=button_names[cb],
+                            callback_data=f"help {cb}",
                             style=row_style,
-                            emoji_key=emoji_keys[item],
+                            emoji_key=emoji_map.get(
+                                cb,
+                                "default",
+                            ),
                         )
-                        for item in row
+                        for cb in row_cbs
                     ]
                 )
 
-            last_style = styles[
-                len(rows) % 3
-            ]
+            last_style = style[len(rows) % 3]
 
             rows.append(
                 [
@@ -632,29 +855,17 @@ class Inline:
     def lang_markup(
         self,
         _lang: str,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
-
-        languages = list(
-            lang.get_languages().items()
-        )
+        style = self.get_row_styles()
+        langs = list(lang.get_languages().items())
 
         rows = []
 
-        for i in range(
-            0,
-            len(languages),
-            2,
-        ):
+        for i in range(0, len(langs), 2):
 
-            row_languages = languages[
-                i:i + 2
-            ]
-
-            row_style = styles[
-                (i // 2) % 3
-            ]
+            row_langs = langs[i:i + 2]
+            row_style = style[(i // 2) % 3]
 
             rows.append(
                 [
@@ -669,7 +880,7 @@ class Inline:
                         style=row_style,
                         emoji_key="language",
                     )
-                    for code, name in row_languages
+                    for code, name in row_langs
                 ]
             )
 
@@ -679,7 +890,10 @@ class Inline:
     # PING
     # ========================================================
 
-    def ping_markup(self, text: str):
+    def ping_markup(
+        self,
+        text: str,
+    ) -> types.InlineKeyboardMarkup:
 
         return self.ikm(
             [
@@ -702,7 +916,7 @@ class Inline:
         chat_id: int,
         item_id: str,
         _text: str,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
         return self.ikm(
             [
@@ -729,9 +943,9 @@ class Inline:
         chat_id: int,
         _text: str,
         playing: bool,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
-        action = (
+        _action = (
             "pause"
             if playing
             else "resume"
@@ -744,7 +958,7 @@ class Inline:
                         text=_text,
                         callback_data=(
                             f"controls "
-                            f"{action} "
+                            f"{_action} "
                             f"{chat_id} q"
                         ),
                         style=ButtonStyle.SUCCESS,
@@ -769,9 +983,9 @@ class Inline:
         cmd_delete: bool,
         language: str,
         chat_id: int,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         return self.ikm(
             [
@@ -782,14 +996,12 @@ class Inline:
                             + " ➜"
                         ),
                         callback_data="settings",
-                        style=styles[0],
-                        emoji_key="play",
+                        style=style[0],
                     ),
                     self.ikb(
                         text=admin_only,
                         callback_data="settings play",
-                        style=styles[0],
-                        emoji_key="admins",
+                        style=style[0],
                     ),
                 ],
                 [
@@ -799,14 +1011,12 @@ class Inline:
                             + " ➜"
                         ),
                         callback_data="settings",
-                        style=styles[1],
-                        emoji_key="cancel",
+                        style=style[1],
                     ),
                     self.ikb(
                         text=cmd_delete,
                         callback_data="settings delete",
-                        style=styles[1],
-                        emoji_key="confirm",
+                        style=style[1],
                     ),
                 ],
                 [
@@ -816,13 +1026,13 @@ class Inline:
                             + " ➜"
                         ),
                         callback_data="settings",
-                        style=styles[2],
+                        style=style[2],
                         emoji_key="language",
                     ),
                     self.ikb(
                         text=lang_codes[language],
                         callback_data="language",
-                        style=styles[2],
+                        style=style[2],
                         emoji_key="language",
                     ),
                 ],
@@ -837,9 +1047,9 @@ class Inline:
         self,
         lang: dict,
         private: bool = False,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         if private:
 
@@ -853,7 +1063,9 @@ class Inline:
                             f"?startgroup=true"
                         ),
                         style=ButtonStyle.SUCCESS,
-                        emoji_key="add",
+                        icon_custom_emoji_id=(
+                            "6100125944381444896"
+                        ),
                     )
                 ],
                 [
@@ -861,13 +1073,17 @@ class Inline:
                         text="Sᴏᴜʀᴄᴇ",
                         callback_data="source_panel",
                         style=ButtonStyle.PRIMARY,
-                        emoji_key="source",
+                        icon_custom_emoji_id=(
+                            "6235576525563895420"
+                        ),
                     ),
                     self.ikb(
                         text="Sᴜᴘᴘᴏʀᴛ",
                         callback_data="support_panel",
                         style=ButtonStyle.PRIMARY,
-                        emoji_key="support",
+                        icon_custom_emoji_id=(
+                            "6039381989985882045"
+                        ),
                     ),
                 ],
                 [
@@ -875,13 +1091,17 @@ class Inline:
                         text=lang["help"],
                         callback_data="help",
                         style=ButtonStyle.PRIMARY,
-                        emoji_key="help",
+                        icon_custom_emoji_id=(
+                            "5409368076447657845"
+                        ),
                     ),
                     self.ikb(
                         text="Tʜᴇ Aʀᴄʜᴏɴ",
                         user_id=config.OWNER_ID,
                         style=ButtonStyle.DANGER,
-                        emoji_key="owner",
+                        icon_custom_emoji_id=(
+                            "6237864166879663987"
+                        ),
                     ),
                 ],
             ]
@@ -893,13 +1113,13 @@ class Inline:
                     self.ikb(
                         text="Sᴏᴜʀᴄᴇ",
                         callback_data="source_panel",
-                        style=styles[2],
+                        style=style[2],
                         emoji_key="source",
                     ),
                     self.ikb(
                         text="Sᴜᴘᴘᴏʀᴛ",
                         callback_data="support_panel",
-                        style=styles[2],
+                        style=style[2],
                         emoji_key="support",
                     ),
                 ],
@@ -907,7 +1127,7 @@ class Inline:
                     self.ikb(
                         text=lang["language"],
                         callback_data="language",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="language",
                     )
                 ],
@@ -922,12 +1142,12 @@ class Inline:
     def source_markup(
         self,
         _lang: dict = None,
-    ):
+    ) -> types.InlineKeyboardMarkup:
 
         if not _lang:
             _lang = lang.languages["en"]
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         return self.ikm(
             [
@@ -938,13 +1158,13 @@ class Inline:
                             "Cʟᴏsᴇ",
                         ),
                         callback_data="close",
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="close",
                     ),
                     self.ikb(
                         text="Bᴀᴄᴋ",
                         callback_data="help home",
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="back",
                     ),
                 ]
@@ -955,9 +1175,11 @@ class Inline:
     # SUPPORT PANEL
     # ========================================================
 
-    def support_markup(self):
+    def support_markup(
+        self,
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         return self.ikm(
             [
@@ -965,13 +1187,13 @@ class Inline:
                     self.ikb(
                         text="Sᴜᴘᴘᴏʀᴛ",
                         url=config.SUPPORT_CHAT,
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="support",
                     ),
                     self.ikb(
                         text="Uᴘᴅᴀᴛᴇs",
                         url=config.SUPPORT_CHANNEL,
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="updates",
                     ),
                 ],
@@ -979,7 +1201,7 @@ class Inline:
                     self.ikb(
                         text="Bᴀᴄᴋ",
                         callback_data="help home",
-                        style=styles[1],
+                        style=style[1],
                         emoji_key="back",
                     )
                 ],
@@ -990,9 +1212,12 @@ class Inline:
     # YOUTUBE
     # ========================================================
 
-    def yt_key(self, link: str):
+    def yt_key(
+        self,
+        link: str,
+    ) -> types.InlineKeyboardMarkup:
 
-        styles = self.get_row_styles()
+        style = self.get_row_styles()
 
         return self.ikm(
             [
@@ -1000,13 +1225,13 @@ class Inline:
                     self.ikb(
                         text="❐",
                         copy_text=link,
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="copy",
                     ),
                     self.ikb(
                         text="Yᴏᴜᴛᴜʙᴇ",
                         url=link,
-                        style=styles[0],
+                        style=style[0],
                         emoji_key="youtube",
                     ),
                 ]
