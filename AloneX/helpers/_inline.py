@@ -332,7 +332,7 @@ class Inline:
                     ),
                     self.ikb(
                         text="Tʜᴇ Aʀᴄʜᴏɴ",
-                        user_id=config.OWNER_USERNAME,
+                        user_id=config.OWNER_ID,
                         style=ButtonStyle.DANGER,
                         icon_custom_emoji_id="6237864166879663987",
                     ),
