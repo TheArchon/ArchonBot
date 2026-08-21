@@ -66,19 +66,19 @@ class Inline:
 
     # 🆕 Aᴜᴛᴏᴘʟᴀʏ Panel System
     def autoplay_panel_markup(self, chat_id: int, enabled: bool) -> types.InlineKeyboardMarkup:
-        status = "🟢 𝐄ɴᴀʙʟᴇᴅ" if enabled else "🔴 𝐃ɪsᴀʙʟᴇᴅ"
+        status = "Eɴᴀʙʟᴇᴅ" if enabled else "Dɪsᴀʙʟᴇᴅ"
         
         return self.ikm(
             [
                 [
                     self.ikb(
-                        text="𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐄ɴᴀʙʟᴇ",
+                        text="Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_ENABLE|{chat_id}",
                         style=ButtonStyle.SUCCESS,
                         icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
                     ),
                     self.ikb(
-                        text="𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐃ɪSᴀʙʟᴇ",
+                        text="Aᴜᴛᴏ Pʟᴀʏ DɪSᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_DISABLE|{chat_id}",
                         style=ButtonStyle.DANGER,
                         icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
@@ -86,7 +86,7 @@ class Inline:
                 ],
                 [
                     self.ikb(
-                        text=f"𝐀ᴜᴛᴏ 𝐏ʟᴀʏ : {status}",
+                        text=f"Aᴜᴛᴏ Pʟᴀʏ : {status}",
                         callback_data="AUTOPLAY_STATUS",
                         style=ButtonStyle.PRIMARY,
                         icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
@@ -149,8 +149,8 @@ class Inline:
             
             keyboard.append(
                 [
-                    self.ikb(text="Aᴜᴛᴏ ᴘʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
-                    self.ikb(text="Aᴅᴅ ᴍᴇ", url="https://t.me/ArchonBeatsBot?startgroup=true", style=style[0]),
+                    self.ikb(text="Aᴜᴛᴏ Pʟᴀʏ", callback_data=f"AUTOPLAY_PANEL_OPEN|{chat_id}", style=style[2]),
+                    self.ikb(text="Aᴅᴅ Mᴇ", url="https://t.me/ArchonBeatsBot?startgroup=true", style=style[0]),
                 ]
             )
             
@@ -313,7 +313,7 @@ class Inline:
                     self.ikb(text="Sᴜᴘᴘᴏʀᴛ", callback_data="support_panel", style=style[2]),
                 ],
                 [
-                    self.ikb(text="𝚨 𝚨 ꧊᱂ 𝛖 𝛅 ⱶ꧊ ", url=config.OWNER_USERNAME, style=style[0]),
+                    self.ikb(text="Tʜᴇ Aʀᴄʜᴏɴ", url=config.OWNER_USERNAME, style=style[0]),
                 ]
             ]
         else:
@@ -354,10 +354,10 @@ class Inline:
         style = self.get_row_styles()
         return self.ikm([
             [
-                self.ikb(text="🛠 Sᴜᴘᴘᴏʀᴛ", url=config.SUPPORT_CHAT, style=style[0]),
-                self.ikb(text="📢 Uᴘᴅᴀᴛᴇs", url=config.SUPPORT_CHANNEL, style=style[0])
+                self.ikb(text="Sᴜᴘᴘᴏʀᴛ", url=config.SUPPORT_CHAT, style=style[0]),
+                self.ikb(text="Uᴘᴅᴀᴛᴇs", url=config.SUPPORT_CHANNEL, style=style[0])
             ],
-            [self.ikb(text="🔙 Bᴀᴄᴋ", callback_data="help home", style=style[1])]
+            [self.ikb(text="Bᴀᴄᴋ", callback_data="help home", style=style[1])]
         ])
 
     def yt_key(self, link: str) -> types.InlineKeyboardMarkup:
