@@ -31,13 +31,13 @@ async def start(_, message: types.Message):
 
     # --- LOADING ANIMATION SEQUENCE FOR PRIVATE CHAT ---
     if private:
-        loading_1 = await message.reply_text("<b>ᴌᴏᴀᴅɪɴɢ....</b>")
+        loading_1 = await message.reply_text("<b>Lᴏᴀᴅɪɴɢ....</b>")
         await asyncio.sleep(0.3)
-        await loading_1.edit_text("<b>ꜱᴛᴀʀᴛɪɴɢ..ʙᴀʙʏ.❤️❤️</b>")
+        await loading_1.edit_text("<b>Sᴛᴀʀᴛɪɴɢ..Bᴀʙʏ.❤️❤️</b>")
         await asyncio.sleep(0.3)
-        await loading_1.edit_text("<b>ɪ ᴀᴍ ᴀʟɪᴠᴇ ʙᴀʙʏ❤️😌🫣🫣</b>")
+        await loading_1.edit_text("<b>I Aᴍ Aʟɪᴠᴇ Bᴀʙʏ❤️😌🫣🫣</b>")
         await asyncio.sleep(0.5)
-        await loading_1.edit_text("<b>𝚨 𝚨 ꧊᱂ 𝛖 𝛅 ⱶ꧊  ʙᴏᴛs🫣🫣.</b>")
+        await loading_1.edit_text("<b>Aʀᴄʜᴏɴ Nᴇᴛᴡᴏʀᴋ.🇮🇳.</b>")
         await asyncio.sleep(0.5)
         await loading_1.delete()
 
@@ -45,7 +45,7 @@ async def start(_, message: types.Message):
     if len(message.command) > 1 and message.command[1] == "help":
         if private:
             # Sticker Before Video in /start help
-            await message.reply_sticker("CAACAgUAAxkBAAFJgZ1qBGwx9Z9vW5BhG3dw0l1A5j4CyQACXRYAAuc-wVWs4--9DGlDKzsE")
+            await message.reply_sticker("CAACAgUAAxkBAAERwSBqiHaM31PVVN_fOLtNdq_Y_V2cbAACahQAAuscqVdQ60eDSoL7kz0E")
         return await _help(_, message)
 
     _text = (
@@ -165,8 +165,8 @@ async def close_menu_cb(_, query: types.CallbackQuery):
 
 @app.on_callback_query(filters.regex("^source_panel$") & ~app.bl_users)
 async def source_panel_cb(_, query: types.CallbackQuery):
-    source_text = "❤️ Powered By Arush\n🤖 @AarushBabeMusic_Bot"
-    image_url = "https://n.uguu.se/xkSAGkHn.jpg"
+    source_text = "<tg-spoiler><b>❖ Lᴜɴᴅ Lᴇʟᴇ Mᴇʀᴀ 😒 Rᴇᴘᴏ Kʏᴀ Kᴀʀᴇɢᴀ.\n\n❖ Lᴇɢᴀ Kʏᴀ Bʜᴏsᴅɪᴋᴇ 😆 Bᴏʟ Nᴀ Lᴇɢᴀ ??</b></tg-spoiler>"
+    image_url = "https://graph.org/file/425dbaf42b88e557fbbac-2fc2ab2cfc540f9803.jpg"
     
     try:
         # Edit media to show image and text instead of the start video
@@ -181,7 +181,7 @@ async def source_panel_cb(_, query: types.CallbackQuery):
 
 @app.on_callback_query(filters.regex("^support_panel$") & ~app.bl_users)
 async def support_panel_cb(_, query: types.CallbackQuery):
-    support_text = "<b>Wᴇʟᴄᴏᴍᴇ ᴛᴏ ᴛʜᴇ Sᴜᴘᴘᴏʀᴛ Pᴀɢᴇ!</b>\n\nJᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟs ʙᴇʟᴏᴡ ғᴏʀ ᴜᴘᴅᴀᴛᴇs ᴀɴᴅ ʜᴇʟᴘ."
+    support_text = "<b>Wᴇʟᴄᴏᴍᴇ Tᴏ Tʜᴇ Sᴜᴘᴘᴏʀᴛ Pᴀɢᴇ!</b>\n\nJᴏɪɴ Oᴜʀ Cʜᴀɴɴᴇʟs Bᴇʟᴏᴡ Fᴏʀ Uᴘᴅᴀᴛᴇs Aɴᴅ Hᴇʟᴘ."
     
     try:
         await query.message.edit_caption(
