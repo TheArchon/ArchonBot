@@ -309,7 +309,7 @@ class Inline:
                     text="Sᴏᴜʀᴄᴇ",
                     callback_data="source_panel",
                     style=ButtonStyle.PRIMARY,
-                    icon_custom_emoji_id="5258337316715373336",  # 🤙
+                    icon_custom_emoji_id="6235576525563895420",  # 🤙
                 ),
                 self.ikb(
                     text="Sᴜᴘᴘᴏʀᴛ",
@@ -323,7 +323,7 @@ class Inline:
                     text=lang["help"],
                     callback_data="help",
                     style=ButtonStyle.PRIMARY,
-                    icon_custom_emoji_id="5260512129240276089",  # 📚
+                    icon_custom_emoji_id="5409368076447657845",  # 📚
                 ),
                 self.ikb(
                     text="Tʜᴇ Aʀᴄʜᴏɴ",
