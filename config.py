@@ -39,7 +39,7 @@ class Config:
         self.PING_IMG = getenv("PING_IMG", "https://graph.org/file/286aa2427c36ca129f609-b2da780c99e73d27a7.mp4")
         
         # --- START VIDEO LINK ---
-        self.START_IMG = getenv("START_IMG", "https://graph.org/file/09588fa43f7658e66986d-9c922299f1f947bc19.jpg")
+        self.START_IMG = getenv("START_IMG", "https://graph.org/file/c83bb8064b95ee51e515c-6c4626e964f37fc102.jpg")
         self.START_VIDEO = getenv("START_VIDEO", "https://graph.org/file/3a79f5b7dfb1e423b49d3-eacd9bc472c36d5be6.mp4")
 
     def check(self):
