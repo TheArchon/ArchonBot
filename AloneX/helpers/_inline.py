@@ -35,7 +35,7 @@ PREMIUM_EMOJIS = {
 
     "language": "5260512129240276089",
     "queue": "5408843502027033965",
-    "stats": "5258337316715373336",
+    "stats": "6100546468924364734",
 
     "admins": "5767288287001580715",
     "auth": "6021618194228187816",
@@ -558,7 +558,7 @@ class Inline:
             [
                 [
                     self.ikb(
-                        text="Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇ",
+                        text="A•Pʟᴀʏ Eɴᴀʙʟᴇ",
                         callback_data=(
                             f"AUTOPLAY_ENABLE|{chat_id}"
                         ),
@@ -566,7 +566,7 @@ class Inline:
                         emoji_key="autoplay",
                     ),
                     self.ikb(
-                        text="Aᴜᴛᴏ Pʟᴀʏ DɪSᴀʙʟᴇ",
+                        text="A•Pʟᴀʏ Dɪsᴀʙʟᴇ",
                         callback_data=(
                             f"AUTOPLAY_DISABLE|{chat_id}"
                         ),
@@ -577,7 +577,7 @@ class Inline:
                 [
                     self.ikb(
                         text=(
-                            f"Aᴜᴛᴏ Pʟᴀʏ : "
+                            f"A•Pʟᴀʏ : "
                             f"{status}"
                         ),
                         callback_data="AUTOPLAY_STATUS",
