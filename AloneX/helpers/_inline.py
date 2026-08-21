@@ -328,7 +328,10 @@ class Inline:
         return self.ikm(rows)
 
     # 🛠️ NEW: SOURCE PANEL MARKUP
-    def source_markup(self) -> types.InlineKeyboardMarkup:
+    def source_markup(self, _lang: dict = None) -> types.InlineKeyboardMarkup:
+        if not _lang:
+            _lang = lang.languages["en"]
+
         style = self.get_row_styles()
         
         return self.ikm([
