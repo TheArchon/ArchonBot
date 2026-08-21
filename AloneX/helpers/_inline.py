@@ -299,23 +299,40 @@ class Inline:
             [
                 self.ikb(
                     text=lang["add_me"],
-                    url=f"https://t.me/{app.username}?startgroup=true", 
-                    style=style[0]
+                    url=f"https://t.me/{app.username}?startgroup=true",
+                    style=ButtonStyle.SUCCESS,
+                    icon_custom_emoji_id="6100125944381444896",  # ➕
                 )
             ],
-            [self.ikb(text=lang["help"], callback_data="help", style=style[1])],
+            [
+                self.ikb(
+                    text="Sᴏᴜʀᴄᴇ",
+                    callback_data="source_panel",
+                    style=ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id="5258337316715373336",  # 🤙
+                ),
+                self.ikb(
+                    text="Sᴜᴘᴘᴏʀᴛ",
+                    callback_data="support_panel",
+                    style=ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id="6039381989985882045",  # 📢
+                ),
+            ],
+            [
+                self.ikb(
+                    text=lang["help"],
+                    callback_data="help",
+                    style=ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id="5260512129240276089",  # 📚
+                ),
+                self.ikb(
+                    text="Tʜᴇ Aʀᴄʜᴏɴ",
+                    user_id=config.OWNER_USERNAME,
+                    style=ButtonStyle.DANGER,
+                    icon_custom_emoji_id="6237864166879663987",  # 👑
+                ),
+            ],
         ]
-        
-        if private:
-            rows += [
-                [
-                    self.ikb(text="Sᴏᴜʀᴄᴇ", callback_data="source_panel", style=style[2]),
-                    self.ikb(text="Sᴜᴘᴘᴏʀᴛ", callback_data="support_panel", style=style[2]),
-                ],
-                [
-                    self.ikb(text="Tʜᴇ Aʀᴄʜᴏɴ", url=config.OWNER_USERNAME, style=style[0]),
-                ]
-            ]
         else:
             rows += [
                 [
