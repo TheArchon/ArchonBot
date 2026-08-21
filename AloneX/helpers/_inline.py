@@ -295,53 +295,72 @@ class Inline:
         self, lang: dict, private: bool = False
     ) -> types.InlineKeyboardMarkup:
         style = self.get_row_styles()
+
         rows = [
             [
                 self.ikb(
                     text=lang["add_me"],
                     url=f"https://t.me/{app.username}?startgroup=true",
                     style=ButtonStyle.SUCCESS,
-                    icon_custom_emoji_id="6100125944381444896",  # ➕
+                    icon_custom_emoji_id="6100125944381444896",
                 )
-            ],
-            [
-                self.ikb(
-                    text="Sᴏᴜʀᴄᴇ",
-                    callback_data="source_panel",
-                    style=ButtonStyle.PRIMARY,
-                    icon_custom_emoji_id="6235576525563895420",  # 🤙
-                ),
-                self.ikb(
-                    text="Sᴜᴘᴘᴏʀᴛ",
-                    callback_data="support_panel",
-                    style=ButtonStyle.PRIMARY,
-                    icon_custom_emoji_id="6039381989985882045",  # 📢
-                ),
-            ],
-            [
-                self.ikb(
-                    text=lang["help"],
-                    callback_data="help",
-                    style=ButtonStyle.PRIMARY,
-                    icon_custom_emoji_id="5409368076447657845",  # 📚
-                ),
-                self.ikb(
-                    text="Tʜᴇ Aʀᴄʜᴏɴ",
-                    user_id=config.OWNER_USERNAME,
-                    style=ButtonStyle.DANGER,
-                    icon_custom_emoji_id="6237864166879663987",  # 👑
-                ),
-            ],
+            ]
         ]
-        else:
+
+        if private:
             rows += [
                 [
-                    self.ikb(text="Sᴏᴜʀᴄᴇ", callback_data="source_panel", style=style[2]),
-                    self.ikb(text="Sᴜᴘᴘᴏʀᴛ", callback_data="support_panel", style=style[2]),
+                    self.ikb(
+                        text="Sᴏᴜʀᴄᴇ",
+                        callback_data="source_panel",
+                        style=ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id="6235576525563895420",
+                    ),
+                    self.ikb(
+                        text="Sᴜᴘᴘᴏʀᴛ",
+                        callback_data="support_panel",
+                        style=ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id="6039381989985882045",
+                    ),
                 ],
-                [self.ikb(text=lang["language"], callback_data="language", style=style[0])],
+                [
+                    self.ikb(
+                        text=lang["help"],
+                        callback_data="help",
+                        style=ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id="5409368076447657845",
+                    ),
+                    self.ikb(
+                        text="Tʜᴇ Aʀᴄʜᴏɴ",
+                        user_id=config.OWNER_USERNAME,
+                        style=ButtonStyle.DANGER,
+                        icon_custom_emoji_id="6237864166879663987",
+                    ),
+                ],
             ]
-            
+        else:
+            rows = [
+                [
+                    self.ikb(
+                        text="Sᴏᴜʀᴄᴇ",
+                        callback_data="source_panel",
+                        style=style[2],
+                    ),
+                    self.ikb(
+                        text="Sᴜᴘᴘᴏʀᴛ",
+                        callback_data="support_panel",
+                        style=style[2],
+                    ),
+                ],
+                [
+                    self.ikb(
+                        text=lang["language"],
+                        callback_data="language",
+                        style=style[0],
+                    )
+                ],
+            ]
+
         return self.ikm(rows)
 
     # 🛠️ NEW: SOURCE PANEL MARKUP
