@@ -24,21 +24,26 @@ async def _delete_later(message: types.Message) -> None:
 
 
 def autoplay_caption(enabled: bool) -> str:
-    status = "🟢 𝐄ɴᴀʙʟᴇᴅ" if enabled else "🔴 𝐃ɪsᴀʙʟᴇᴅ"
+    status = "Eɴᴀʙʟᴇᴅ" if enabled else "Dɪsᴀʙʟᴇᴅ"
     return f"""
-**🎵 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐒ᴇᴛᴛɪɴɢ𝐬**
+<b>⟡ Aᴜᴛᴏ Pʟᴀʏ — Pʀᴇᴍɪᴜᴍ Mᴜsɪᴄ ⟡</b>
 
-➻ 𝐌ᴀɴᴀɢᴇ 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ ғᴇᴀᴛᴜʀᴇ ғᴏʀ ᴛʜɪs ɢʀᴏᴜᴘ.
+<b>◈ Wʜᴇɴ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴇɴᴅs,
+ᴛʜᴇ ᴍᴜsɪᴄ ᴅᴏᴇsɴ'ᴛ.
+Lᴇᴛ ᴛʜᴇ sʏsᴛᴇᴍ ᴋᴇᴇᴘ ᴛʜᴇ ᴠɪʙᴇ ᴀʟɪᴠᴇ.</b>
 
-**✦ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛᴀᴛᴜ𝐬**
-{status}
+<b>✦ Sʏsᴛᴇᴍ Sᴛᴀᴛᴜs</b>
+<b>⟡ {status}</b>
 
-➻ 𝐖ʜᴇɴ 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ ɪ𝐬 𝐄ɴᴀʙʟᴇᴅ, ᴛʜᴇ ʙᴏᴛ ᴡɪʟʟ
-ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ᴘʟᴀʏ ʀᴇᴄᴏᴍᴍᴇɴᴅᴇᴅ ᴛʀᴀᴄᴋ𝐬
-ᴡʜᴇɴ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴇɴᴅ𝐬.
+<b>◈ Aᴄᴛɪᴠᴀᴛᴇ Aᴜᴛᴏ Pʟᴀʏ ᴀɴᴅ ʟᴇᴛ ᴛʜᴇ
+sʏsᴛᴇᴍ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ sᴇʟᴇᴄᴛ
+ᴛʜᴇ ɴᴇxᴛ ᴘᴇʀғᴇᴄᴛ ᴛʀᴀᴄᴋ.</b>
 
-━━━━━━━━━━━━━━━
-⚡ 𝐏ᴏᴡᴇʀᴇᴅ ʙʏ ➛ 𝚨 𝚨 ꧊᱂ 𝛖 𝛅 ⱶ꧊ 
+<b>✦ Nᴏ Pᴀᴜsᴇs  •  Nᴏ Sɪʟᴇɴᴄᴇ  •  Oɴʟʏ Mᴜsɪᴄ ✦</b>
+
+━━━━━━━━━━━━━━━━━━
+
+<b>❖ Uɴʟɪᴍɪᴛᴇᴅ Vɪʙᴇ • Sᴇᴀᴍʟᴇss Mᴜsɪᴄ ❖</b>
 """
 
 
@@ -56,14 +61,14 @@ async def _autoplay(_, m: types.Message):
     # Handle direct commands like /autoplay off
     if mode in ("off", "disable"):
         await db.set_autoplay(m.chat.id, False)
-        msg = await m.reply_text("🔴 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐃ɪsᴀʙʟᴇᴅ")
+        msg = await m.reply_text("Aᴜᴛᴏ Pʟᴀʏ Dɪsᴀʙʟᴇᴅ")
         asyncio.create_task(_delete_later(msg))
         return
 
     # Handle direct commands like /autoplay on
     if mode in ("on", "enable"):
         await db.set_autoplay(m.chat.id, True)
-        msg = await m.reply_text("🟢 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐄ɴᴀʙʟᴇᴅ")
+        msg = await m.reply_text("Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇᴅ")
         asyncio.create_task(_delete_later(msg))
         return
 
@@ -101,11 +106,11 @@ async def autoplay_callback(_, query: types.CallbackQuery):
     if action == "AUTOPLAY_ENABLE":
         await db.set_autoplay(chat_id, True)
         enabled = True
-        await query.answer("🟢 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐄ɴᴀʙʟᴇᴅ", show_alert=False)
+        await query.answer("Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇᴅ", show_alert=False)
     else:
         await db.set_autoplay(chat_id, False)
         enabled = False
-        await query.answer("🔴 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐃ɪsᴀʙʟᴇᴅ", show_alert=False)
+        await query.answer("Aᴜᴛᴏ Pʟᴀʏ Dɪsᴀʙʟᴇᴅ", show_alert=False)
 
     # Update the panel dynamically
     try:
@@ -119,7 +124,7 @@ async def autoplay_callback(_, query: types.CallbackQuery):
 
 @app.on_callback_query(filters.regex("^AUTOPLAY_STATUS$") & ~app.bl_users)
 async def autoplay_status_check(_, query: types.CallbackQuery):
-    await query.answer("⚡ 𝐀ᴜᴛᴏ 𝐏ʟᴀʏ 𝐒ᴛᴀᴛᴜ𝐬: Check the panel above 👆", show_alert=True)
+    await query.answer("Aᴜᴛᴏ Pʟᴀʏ Sᴛᴀᴛᴜs: Check the panel above 👆", show_alert=True)
 
 
 @app.on_callback_query(filters.regex("^autoplay_panel close$") & ~app.bl_users)
@@ -141,7 +146,7 @@ async def autoplay_open_panel_cb(_, query: types.CallbackQuery):
     except AttributeError:
         enabled = False
 
-    banner = getattr(config, "AUTOPLAY_BANNER", getattr(config, "START_IMG", "https://files.catbox.moe/etdhlr.jpg"))
+    banner = getattr(config, "AUTOPLAY_BANNER", getattr(config, "START_IMG", "https://graph.org/file/c83bb8064b95ee51e515c-6c4626e964f37fc102.jpg"))
     # Ek naya panel bhejo jisme saare naye controls honge
     await query.message.reply_photo(
         photo=banner,
