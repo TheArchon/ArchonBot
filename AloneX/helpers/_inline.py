@@ -6,50 +6,47 @@ from pyrogram.enums import ButtonStyle
 from AloneX import app, config, lang
 from AloneX.core.lang import lang_codes
 
+# Safe fallback if PREMIUM_EMOJIS is not defined in config
 # ============================================================
 # PREMIUM / CUSTOM EMOJI CONFIG
-# Replace the values below with your own Telegram custom emoji IDs.
-# Leave a value as "" to keep that button without a custom emoji. ops
+# Put your VALID Telegram custom emoji IDs here.
+# Leave a value empty ("") if you do not want an icon on that button.
 # ============================================================
-
 PREMIUM_EMOJIS = {
-    "play": "5408843502027033965",
-    "pause": "5258453452631056344",
-    "replay": "5463274047771000031",
-    "skip": "6172663483834831848",
-    "stop": "5258453452631056344",
-    "autoplay": "5408843502027033965",
-    "autoplay_disable": "5408943604829794451",
-    "autoplay_status": "6172312314423808834",
-    "add": "6100125944381444896",
-    "close": "5258453452631056344",
-    "back": "6113685078825505075",
-    "home": "6170199997968029712",
-    "help": "5409368076447657845",
-    "source": "6235576525563895420",
-    "support": "6039381989985882045",
-    "owner": "6237864166879663987",
-    "language": "6246741653827095091",
-    "settings": "5409194306365829029",
-    "queue": "5409143496902716934",
-    "stats": "5937999673510858217",
-    "admins": "5307549030518110645",
-    "auth": "5372865660500067203",
-    "blacklist": "6172273586703700991",
-    "sudo": "5409186957676785646",
-    "vclogger": "5258337316715373336",
-    "ping": "5370546867786523009",
-    "confirm": "5778455936410588193",
-    "cancel": "6271611232457855630",
-    "copy": "5891211339170326418",
-    "youtube": "6280269890821558384",
-    "updates": "6102938383456146362",
-    "force_play": "5408916593780470262",
-    "status": "5767288287001580715",
-    "default": "6100514338274020922",
+    "play": "",
+    "pause": "",
+    "replay": "",
+    "skip": "",
+    "stop": "",
+    "autoplay": "",
+    "autoplay_disable": "",
+    "autoplay_status": "",
+    "add": "",
+    "close": "",
+    "back": "",
+    "home": "",
+    "help": "",
+    "source": "",
+    "support": "",
+    "owner": "",
+    "language": "",
+    "queue": "",
+    "stats": "",
+    "admins": "",
+    "auth": "",
+    "blacklist": "",
+    "sudo": "",
+    "vclogger": "",
+    "ping": "",
+    "confirm": "",
+    "cancel": "",
+    "copy": "",
+    "youtube": "",
+    "updates": "",
+    "force_play": "",
+    "default": "",
 }
 
-# Existing config.py values can override the defaults above.
 _config_emojis = getattr(config, "PREMIUM_EMOJIS", None)
 if isinstance(_config_emojis, dict):
     PREMIUM_EMOJIS.update(_config_emojis)
@@ -75,16 +72,10 @@ class Inline:
         self._button = types.InlineKeyboardButton
 
     def _emoji_key(self, text=None, callback_data=None, url=None, copy_text=None):
-        """Choose a custom emoji key automatically from button information."""
-        value = " ".join(
-            str(x).lower()
-            for x in (text, callback_data, url, copy_text)
-            if x is not None
-        )
-
+        value = " ".join(str(x).lower() for x in (text, callback_data, url, copy_text) if x is not None)
         rules = (
-            ("autoplay_disable", ("autoplay_disable", "aᴜᴛᴏ pʟᴀʏ dɪsᴀʙʟᴇ")),
-            ("autoplay_status", ("autoplay_status", "aᴜᴛᴏ pʟᴀʏ :")),
+            ("autoplay_disable", ("autoplay_enable", "autoplay_disable", "auto play disable")),
+            ("autoplay_status", ("autoplay_status", "auto play :", "enabled", "disabled")),
             ("autoplay", ("autoplay", "aᴜᴛᴏ pʟᴀʏ")),
             ("pause", ("controls pause", "iɪ")),
             ("replay", ("controls replay", "⥁")),
@@ -112,38 +103,25 @@ class Inline:
             ("youtube", ("youtube",)),
             ("copy", ("copy_text", "❐")),
             ("updates", ("updates",)),
-            ("settings", ("settings",)),
         )
-
         for key, needles in rules:
             if any(needle in value for needle in needles):
                 return key
-
         return "default"
 
     def pkb(self, *args, emoji_key=None, **kwargs):
-        """
-        Centralized InlineKeyboardButton wrapper.
-
-        - Existing explicit icon_custom_emoji_id is always preserved.
-        - Otherwise an emoji ID is selected automatically.
-        - Empty IDs are ignored, so buttons continue to work normally.
-        """
+        # Explicit IDs always win. Otherwise select an ID from PREMIUM_EMOJIS.
         explicit_id = kwargs.get("icon_custom_emoji_id")
         if not explicit_id:
             key = emoji_key or self._emoji_key(
-                kwargs.get("text"),
-                kwargs.get("callback_data"),
-                kwargs.get("url"),
-                kwargs.get("copy_text"),
+                kwargs.get("text"), kwargs.get("callback_data"),
+                kwargs.get("url"), kwargs.get("copy_text")
             )
             emoji_id = PREMIUM_EMOJIS.get(key) or PREMIUM_EMOJIS.get("default")
             if emoji_id:
                 kwargs["icon_custom_emoji_id"] = str(emoji_id)
-
         return self._button(*args, **kwargs)
 
-    # Keep all existing self.ikb(...) calls working through the centralized wrapper.
     @property
     def ikb(self):
         return self.pkb
@@ -194,13 +172,13 @@ class Inline:
                         text="Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_ENABLE|{chat_id}",
                         style=ButtonStyle.SUCCESS,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["autoplay"],
+                        icon_custom_emoji_id="5408843502027033965",
                     ),
                     self.ikb(
                         text="Aᴜᴛᴏ Pʟᴀʏ DɪSᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_DISABLE|{chat_id}",
                         style=ButtonStyle.DANGER,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["autoplay_disable"],
+                        icon_custom_emoji_id="5408943604829794451",
                     ),
                 ],
                 [
@@ -208,7 +186,7 @@ class Inline:
                         text=f"Aᴜᴛᴏ Pʟᴀʏ : {status}",
                         callback_data="AUTOPLAY_STATUS",
                         style=ButtonStyle.PRIMARY,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["autoplay_status"],
+                        icon_custom_emoji_id="6172312314423808834",
                     )
                 ],
                 [
@@ -216,7 +194,7 @@ class Inline:
                         text="Cʟᴏsᴇ",
                         callback_data="close",
                         style=ButtonStyle.DANGER,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["close"],
+                        icon_custom_emoji_id="5258453452631056344",
                     )
                 ]
             ]
@@ -422,7 +400,7 @@ class Inline:
                     text=lang["add_me"],
                     url=f"https://t.me/{app.username}?startgroup=true",
                     style=ButtonStyle.SUCCESS,
-                    icon_custom_emoji_id=PREMIUM_EMOJIS["add"],
+                    icon_custom_emoji_id="6100125944381444896",
                 )
             ]
         ]
@@ -434,13 +412,13 @@ class Inline:
                         text="Sᴏᴜʀᴄᴇ",
                         callback_data="source_panel",
                         style=ButtonStyle.PRIMARY,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["source"],
+                        icon_custom_emoji_id="6235576525563895420",
                     ),
                     self.ikb(
                         text="Sᴜᴘᴘᴏʀᴛ",
                         callback_data="support_panel",
                         style=ButtonStyle.PRIMARY,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["support"],
+                        icon_custom_emoji_id="6039381989985882045",
                     ),
                 ],
                 [
@@ -448,13 +426,13 @@ class Inline:
                         text=lang["help"],
                         callback_data="help",
                         style=ButtonStyle.PRIMARY,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["help"],
+                        icon_custom_emoji_id="5409368076447657845",
                     ),
                     self.ikb(
                         text="Tʜᴇ Aʀᴄʜᴏɴ",
                         user_id=config.OWNER_ID,
                         style=ButtonStyle.DANGER,
-                        icon_custom_emoji_id=PREMIUM_EMOJIS["owner"],
+                        icon_custom_emoji_id="6237864166879663987",
                     ),
                 ],
             ]
