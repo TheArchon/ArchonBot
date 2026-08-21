@@ -75,13 +75,13 @@ class Inline:
                         text="Aᴜᴛᴏ Pʟᴀʏ Eɴᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_ENABLE|{chat_id}",
                         style=ButtonStyle.SUCCESS,
-                        icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
+                        icon_custom_emoji_id="5408843502027033965",
                     ),
                     self.ikb(
                         text="Aᴜᴛᴏ Pʟᴀʏ DɪSᴀʙʟᴇ",
                         callback_data=f"AUTOPLAY_DISABLE|{chat_id}",
                         style=ButtonStyle.DANGER,
-                        icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
+                        icon_custom_emoji_id="5408943604829794451",
                     ),
                 ],
                 [
@@ -89,14 +89,15 @@ class Inline:
                         text=f"Aᴜᴛᴏ Pʟᴀʏ : {status}",
                         callback_data="AUTOPLAY_STATUS",
                         style=ButtonStyle.PRIMARY,
-                        icon_custom_emoji_id=random.choice(PREMIUM_EMOJIS) if PREMIUM_EMOJIS else None
+                        icon_custom_emoji_id="6172312314423808834",
                     )
                 ],
                 [
                     self.ikb(
                         text="Cʟᴏsᴇ",
                         callback_data="close",
-                        style=ButtonStyle.DANGER
+                        style=ButtonStyle.DANGER,
+                        icon_custom_emoji_id="5258453452631056344",
                     )
                 ]
             ]
