@@ -23,7 +23,7 @@ class Config:
 
         self.SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
         self.SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
-        self.OWNER_USERNAME = getenv("OWNER_USERNAME", "https://t.me/ArchonOfficial")
+        self.OWNER_USERNAME = getenv("OWNER_USERNAME", "https://t.me/TeamArchon?direct")
 
         self.AUTO_END: bool = getenv("AUTO_END", False)
         self.AUTO_LEAVE: bool = getenv("AUTO_LEAVE", False)
