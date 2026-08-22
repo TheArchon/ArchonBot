@@ -144,7 +144,7 @@ class VCLogger:
                 chat_id=chat_id,
                 text=text,
                 reply_markup=keyboard,
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
 
             # IMPORTANT:
