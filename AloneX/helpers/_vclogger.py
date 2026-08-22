@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 # This file is part of AloneXMusic
 
-import asyncio
+from html import escape
 
 from pyrogram.types import (
     InlineKeyboardMarkup,
@@ -73,6 +73,7 @@ class VCLogger:
                     )
 
                 username = user.username
+
 
         except Exception:
             pass
@@ -193,13 +194,15 @@ class VCLogger:
             )
         )
 
+        safe_name = escape(str(name))
+
         text = (
             "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
             "<b>      🎧 Jᴏɪɴᴇᴅ Vᴄ</b>\n"
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            f"<b>{safe_name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -243,13 +246,15 @@ class VCLogger:
             )
         )
 
+        safe_name = escape(str(name))
+
         text = (
             "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
             "<b>       🔇 Lᴇғᴛ Vᴄ</b>\n"
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            f"<b>{safe_name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -300,13 +305,15 @@ class VCLogger:
             )
         )
 
+        safe_name = escape(str(name))
+
         text = (
             "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
             "<b>       🔕 Mᴜᴛᴇᴅ Vᴄ</b>\n"
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            f"<b>{safe_name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
@@ -352,13 +359,15 @@ class VCLogger:
             )
         )
 
+        safe_name = escape(str(name))
+
         text = (
             "<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
             "<b>       🔊 Uɴᴍᴜᴛᴇᴅ Vᴄ</b>\n"
             "<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
 
             "<b>◈ Nᴀᴍᴇ:</b>\n"
-            f"<b>{name}</b>\n\n"
+            f"<b>{safe_name}</b>\n\n"
 
             "<b>◈ Uѕᴇʀ ID:</b>\n"
             f"<code>{user_id}</code>\n\n"
