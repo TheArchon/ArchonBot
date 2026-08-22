@@ -18,7 +18,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 from pyrogram import filters, types, enums
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, MessageEntity
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from AloneX import app
 
@@ -574,45 +574,11 @@ async def welcome_new_members(
             # Caption
             # ------------------------------------------------
 
-            # ------------------------------------------------
-            # Premium custom emojis in caption
-            # ------------------------------------------------
-            # Use MessageEntity instead of <tg-emoji> HTML so the
-            # caption remains compatible with Pyrogram versions that
-            # do not parse Telegram's tg-emoji HTML tag.
-            welcome_emoji = "✨"
-            group_emoji = "✨"
-
             caption = (
-                f"Wᴇʟᴄᴏᴍᴇ, {member.mention}! {welcome_emoji}\n\n"
-                f"Wᴇʟᴄᴏᴍᴇ Tᴏ {group_name} {group_emoji}\n"
-                f"Nᴇᴡ Fᴀᴄᴇ • Nᴇᴡ Vɪʙᴇ • Nᴇᴡ Sᴛᴏʀʏ\n\n"
-                f"Rᴇsᴘᴇᴄᴛ Tʜᴇ Rᴇᴀʟ • Mᴀᴛᴄʜ Tʜᴇ Eɴᴇʀɢʏ\n\n"
-                f"Nᴏ Fᴀᴋᴇ Vɪʙᴇs • Nᴏ Uɴɴᴇᴄᴇssᴀʀʏ Dʀᴀᴍᴀ\n\n"
-                f"Sᴛᴀʏ Aᴄᴛɪᴠᴇ • Sᴛᴀʏ Sᴀᴠᴀɢᴇ • Sᴛᴀʏ Lᴇɢᴇɴᴅᴀʀʏ\n\n"
-                f"Eɴᴛᴇʀ Aѕ A Sᴛʀᴀɴɢᴇʀ, Lᴇᴀᴠᴇ Aѕ A Lᴇɢᴇɴᴅ."
+                f"<b>Welcome, {member.mention}! 👋</b>\n\n"
+                f"Welcome to <b>{group_name}</b> 💙\n"
+                f"Be active, be respectful & have fun!"
             )
-
-            def _utf16_offset(text, char_index):
-                return len(text[:char_index].encode("utf-16-le")) // 2
-
-            welcome_pos = caption.index(welcome_emoji)
-            group_pos = caption.index(group_emoji)
-
-            caption_entities = [
-                MessageEntity(
-                    type="custom_emoji",
-                    offset=_utf16_offset(caption, welcome_pos),
-                    length=2,
-                    custom_emoji_id=USER_PROFILE_EMOJI_ID,
-                ),
-                MessageEntity(
-                    type="custom_emoji",
-                    offset=_utf16_offset(caption, group_pos),
-                    length=2,
-                    custom_emoji_id=ADD_BOT_EMOJI_ID,
-                ),
-            ]
 
             # ------------------------------------------------
             # BUTTONS
@@ -664,7 +630,6 @@ async def welcome_new_members(
             await message.reply_photo(
                 photo=card,
                 caption=caption,
-                caption_entities=caption_entities,
                 reply_markup=keyboard,
                 quote=False,
             )
