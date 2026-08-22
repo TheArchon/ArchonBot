@@ -1239,7 +1239,7 @@ class Inline:
 
                     self.ikb(
                         text="Tʜᴇ Aʀᴄʜᴏɴ",
-                        user_id=config.OWNER_USERNAME,
+                        user_id=config.OWNER_ID,
                         style=ButtonStyle.DANGER,
                         emoji_key="owner",
                     ),
