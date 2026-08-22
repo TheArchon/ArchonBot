@@ -575,13 +575,13 @@ async def welcome_new_members(
             # ------------------------------------------------
 
             caption = (
-                f"Wᴇʟᴄᴏᴍᴇ, {member.mention}!\n\n"
-                f"Wᴇʟᴄᴏᴍᴇ Tᴏ {group_name}\n"
-                f"Nᴇᴡ Fᴀᴄᴇ • Nᴇᴡ Vɪʙᴇ • Nᴇᴡ Sᴛᴏʀʏ\n\n"
-                f"Rᴇsᴘᴇᴄᴛ Tʜᴇ Rᴇᴀʟ • Mᴀᴛᴄʜ Tʜᴇ Eɴᴇʀɢʏ\n\n"
-                f"Nᴏ Fᴀᴋᴇ Vɪʙᴇs • Nᴏ Uɴɴᴇᴄᴇssᴀʀʏ Dʀᴀᴍᴀ\n\n"
-                f"Sᴛᴀʏ Aᴄᴛɪᴠᴇ • Sᴛᴀʏ Sᴀᴠᴀɢᴇ • Sᴛᴀʏ Lᴇɢᴇɴᴅᴀʀʏ\n\n"
-                f"Eɴᴛᴇʀ Aѕ A Sᴛʀᴀɴɢᴇʀ, Lᴇᴀᴠᴇ Aѕ A Lᴇɢᴇɴᴅ."
+                f"<b>Wᴇʟᴄᴏᴍᴇ,<b> {member.mention}!\n\n"
+                f"<b>Wᴇʟᴄᴏᴍᴇ Tᴏ<b> {group_name}\n\n"
+                f"<b>Nᴇᴡ Fᴀᴄᴇ • Nᴇᴡ Vɪʙᴇ • Nᴇᴡ Sᴛᴏʀʏ<b>\n"
+                f"<b>Rᴇsᴘᴇᴄᴛ Tʜᴇ Rᴇᴀʟ • Mᴀᴛᴄʜ Tʜᴇ Eɴᴇʀɢʏ<b>\n"
+                f"<b>Nᴏ Fᴀᴋᴇ Vɪʙᴇs • Nᴏ Uɴɴᴇᴄᴇssᴀʀʏ Dʀᴀᴍᴀ<b>\n"
+                f"<b>Sᴛᴀʏ Aᴄᴛɪᴠᴇ • Sᴛᴀʏ Sᴀᴠᴀɢᴇ • Sᴛᴀʏ Lᴇɢᴇɴᴅᴀʀʏ<b>\n\n"
+                f"<b>Eɴᴛᴇʀ Aѕ A Sᴛʀᴀɴɢᴇʀ, Lᴇᴀᴠᴇ Aѕ A Lᴇɢᴇɴᴅ.<b>"
             )
 
             # ------------------------------------------------
@@ -609,7 +609,7 @@ async def welcome_new_members(
             )
 
             add_bot_button = InlineKeyboardButton(
-                text="Add Bot",
+                text="Aᴅᴅ Mᴇ",
                 url=(
                     "https://t.me/"
                     "ArchonBeatsBot"
