@@ -285,15 +285,54 @@ async def _controls(_, query: types.CallbackQuery):
 # HELP CALLBACK HANDLER
 # ============================================================
 
+# Dedicated handler for the HELP -> BACK button.
+# Keeping this separate prevents other "help ..." callbacks
+# from interfering with the exact "help back" callback.
+
 @app.on_callback_query(
-    filters.regex(r"^help(?:\s|$)") & ~app.bl_users
+    filters.regex(r"^help\\s+back$")
+    & ~app.bl_users
+)
+@lang.language()
+async def _help_back(_, query: types.CallbackQuery):
+
+    await query.answer()
+
+    try:
+        markup = buttons.help_markup(query.lang)
+
+        # Normal help messages are text messages.
+        # If the message happens to be a media message, use its caption.
+        if query.message.text is not None:
+            return await query.edit_message_text(
+                text=query.lang["help_menu"],
+                reply_markup=markup,
+            )
+
+        return await query.edit_message_caption(
+            caption=query.lang["help_menu"],
+            reply_markup=markup,
+        )
+
+    except Exception as e:
+        # Do not silently swallow the reason why the Back button failed.
+        try:
+            await query.answer(
+                f"Help Back Error: {str(e)[:180]}",
+                show_alert=True,
+            )
+        except Exception:
+            pass
+
+
+@app.on_callback_query(
+    filters.regex(r"^help(?:\\s|$)")
+    & ~app.bl_users
 )
 @lang.language()
 async def _help(_, query: types.CallbackQuery):
 
-    data = query.data.split(
-        maxsplit=1
-    )
+    data = query.data.split(maxsplit=1)
 
     # ========================================================
     # HELP MAIN
@@ -310,23 +349,15 @@ async def _help(_, query: types.CallbackQuery):
     # BACK TO HELP MENU
     # ========================================================
 
+    # "help back" is handled by _help_back above.
     if action == "back":
-
-        await query.answer()
-
-        return await query.edit_message_text(
-            text=query.lang["help_menu"],
-            reply_markup=buttons.help_markup(
-                query.lang
-            ),
-        )
+        return await query.answer()
 
     # ========================================================
     # HOME
     # ========================================================
 
     if action == "home":
-
         return await query.answer(
             url=f"https://t.me/{app.username}?start=home"
         )
@@ -340,7 +371,6 @@ async def _help(_, query: types.CallbackQuery):
         await query.answer()
 
         try:
-
             await query.message.delete()
 
             if query.message.reply_to_message:
@@ -358,7 +388,6 @@ async def _help(_, query: types.CallbackQuery):
     help_key = f"help_{action}"
 
     if help_key not in query.lang:
-
         return await query.answer(
             "Iɴᴠᴀʟɪᴅ Hᴇʟᴘ Oᴘᴛɪᴏɴ.",
             show_alert=True,
@@ -366,16 +395,36 @@ async def _help(_, query: types.CallbackQuery):
 
     await query.answer()
 
-    return await query.edit_message_text(
-        text=query.lang[help_key],
-        reply_markup=buttons.help_markup(
-            query.lang,
-            True,
-        ),
-    )
+    try:
+        return await query.edit_message_text(
+            text=query.lang[help_key],
+            reply_markup=buttons.help_markup(
+                query.lang,
+                True,
+            ),
+        )
+
+    except Exception as e:
+        try:
+            return await query.edit_message_caption(
+                caption=query.lang[help_key],
+                reply_markup=buttons.help_markup(
+                    query.lang,
+                    True,
+                ),
+            )
+        except Exception:
+            try:
+                await query.answer(
+                    f"Help Page Error: {str(e)[:180]}",
+                    show_alert=True,
+                )
+            except Exception:
+                pass
 
 
 # ============================================================
+
 # SETTINGS CALLBACK
 # ============================================================
 
