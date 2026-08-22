@@ -575,9 +575,13 @@ async def welcome_new_members(
             # ------------------------------------------------
 
             caption = (
-                f"<b>Welcome, {member.mention}! 👋</b>\n\n"
-                f"Welcome to <b>{group_name}</b> 💙\n"
-                f"Be active, be respectful & have fun!"
+                f"Wᴇʟᴄᴏᴍᴇ, {member.mention}!\n\n"
+                f"Wᴇʟᴄᴏᴍᴇ Tᴏ {group_name}\n"
+                f"Nᴇᴡ Fᴀᴄᴇ • Nᴇᴡ Vɪʙᴇ • Nᴇᴡ Sᴛᴏʀʏ\n\n"
+                f"Rᴇsᴘᴇᴄᴛ Tʜᴇ Rᴇᴀʟ • Mᴀᴛᴄʜ Tʜᴇ Eɴᴇʀɢʏ\n\n"
+                f"Nᴏ Fᴀᴋᴇ Vɪʙᴇs • Nᴏ Uɴɴᴇᴄᴇssᴀʀʏ Dʀᴀᴍᴀ\n\n"
+                f"Sᴛᴀʏ Aᴄᴛɪᴠᴇ • Sᴛᴀʏ Sᴀᴠᴀɢᴇ • Sᴛᴀʏ Lᴇɢᴇɴᴅᴀʀʏ\n\n"
+                f"Eɴᴛᴇʀ Aѕ A Sᴛʀᴀɴɢᴇʀ, Lᴇᴀᴠᴇ Aѕ A Lᴇɢᴇɴᴅ."
             )
 
             # ------------------------------------------------
