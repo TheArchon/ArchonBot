@@ -290,7 +290,7 @@ async def _controls(_, query: types.CallbackQuery):
 # from interfering with the exact "help back" callback.
 
 @app.on_callback_query(
-    filters.regex(r"^help\\s+back$")
+    filters.regex(r"^(?:help\\s+back|help_back)$")
     & ~app.bl_users
 )
 @lang.language()
@@ -349,7 +349,7 @@ async def _help(_, query: types.CallbackQuery):
     # BACK TO HELP MENU
     # ========================================================
 
-    # "help back" is handled by _help_back above.
+    # Both old and new Back callbacks are handled by _help_back above.
     if action == "back":
         return await query.answer()
 
