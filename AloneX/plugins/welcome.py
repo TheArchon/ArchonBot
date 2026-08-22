@@ -575,9 +575,19 @@ async def welcome_new_members(
             # ------------------------------------------------
 
             caption = (
-                f"<b>Welcome, {member.mention}! 👋</b>\n\n"
-                f"Welcome to <b>{group_name}</b> 💙\n"
-                f"Be active, be respectful & have fun!"
+                f'<b>Wᴇʟᴄᴏᴍᴇ, {member.mention}!</b> '
+                f'<tg-emoji emoji-id="{USER_PROFILE_EMOJI_ID}">✦</tg-emoji>\n\n'
+                f'<tg-emoji emoji-id="{ADD_BOT_EMOJI_ID}">✦</tg-emoji> '
+                f'<b>Wᴇʟᴄᴏᴍᴇ Tᴏ {group_name}</b>\n\n'
+                f'<tg-emoji emoji-id="{USER_PROFILE_EMOJI_ID}">✦</tg-emoji> '
+                f'Nᴇᴡ Fᴀᴄᴇ • Nᴇᴡ Vɪʙᴇ • Nᴇᴡ Sᴛᴏʀʏ\n\n'
+                f'<tg-emoji emoji-id="{ADD_BOT_EMOJI_ID}">✦</tg-emoji> '
+                f'Rᴇsᴘᴇᴄᴛ Tʜᴇ Rᴇᴀʟ • Mᴀᴛᴄʜ Tʜᴇ Eɴᴇʀɢʏ\n\n'
+                f'<tg-emoji emoji-id="{USER_PROFILE_EMOJI_ID}">✦</tg-emoji> '
+                f'Nᴏ Fᴀᴋᴇ Vɪʙᴇs • Nᴏ Uɴɴᴇᴄᴇssᴀʀʏ Dʀᴀᴍᴀ\n\n'
+                f'<tg-emoji emoji-id="{ADD_BOT_EMOJI_ID}">✦</tg-emoji> '
+                f'Sᴛᴀʏ Aᴄᴛɪᴠᴇ • Sᴛᴀʏ Sᴀᴠᴀɢᴇ • Sᴛᴀʏ Lᴇɢᴇɴᴅᴀʀʏ\n\n'
+                f'<b>Eɴᴛᴇʀ Aѕ A Sᴛʀᴀɴɢᴇʀ, Lᴇᴀᴠᴇ Aѕ A Lᴇɢᴇɴᴅ.</b>'
             )
 
             # ------------------------------------------------
