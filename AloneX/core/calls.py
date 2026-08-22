@@ -1594,13 +1594,10 @@ class TgCall(PyTgCalls):
                     return
 
 
-                # Save new state BEFORE notification
-                # so duplicate updates don't trigger
-                # duplicate messages.
-                vclogger.mute_state[
-                    key
-                ] = new_muted
-
+                # IMPORTANT: do NOT update mute_state here.
+                # notify_mute()/notify_unmute() owns the state update.
+                # Updating it before the notification would make
+                # notify_mute() / notify_unmute() return immediately.
 
                 # ==================================
                 # MUTED
